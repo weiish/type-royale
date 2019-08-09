@@ -1,27 +1,29 @@
 import React from 'react';
 import io from 'socket.io-client';
+import { BrowserRouter, Route, Link } from 'react-router-dom'
+import Login from './Login'
+import Lobby from './Lobby'
 
 class App extends React.Component {
 
   constructor() {
     super();
-    this.state = {
-      endpoint: 'http://localhost:4000'
-    }
+    
   }
 
-  connectIO() {
-    var socket = io(this.state.endpoint)
-    this.setState({ connection: socket })
-  }
+ 
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <button onClick={() => this.connectIO()}>Connect</button>
-        </header>
+      <div>
+        <BrowserRouter>
+          <div className="App">
+            <Route exact path="/" component={Login} />
+            <Route exact path="/lobby" component={Lobby} />
+          </div>
+        </BrowserRouter>
       </div>
+
     );
   }
 }
