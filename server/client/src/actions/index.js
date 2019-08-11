@@ -1,15 +1,16 @@
-import { LOGIN_USER } from './types';
+import { LOGIN_USER, START_IO } from './types';
 import io from 'socket.io-client';
 
-const loginUser = () => {
-    const myConnection = io()
+const connectIO = (username) => {
+    console.log('Connecting...')
+    const myConnection = io('localhost:4000')
+    return {
+        type: START_IO,
+        connection: myConnection,
+        username
+    }
 }
 
-connectIO() {
-    var socket = io(this.state.endpoint)
-    this.setState({ connection: socket })
-  }
-
-export default {
-    loginUser
+export {
+    connectIO
 }

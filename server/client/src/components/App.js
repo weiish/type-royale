@@ -1,6 +1,7 @@
 import React from 'react';
 import io from 'socket.io-client';
 import { BrowserRouter, Route, Link } from 'react-router-dom'
+import {connect} from 'react-redux'
 import Login from './Login'
 import Lobby from './Lobby'
 
@@ -8,10 +9,9 @@ class App extends React.Component {
 
   constructor() {
     super();
-    
   }
+  
 
- 
 
   render() {
     return (
@@ -28,4 +28,8 @@ class App extends React.Component {
   }
 }
 
-export default App;
+function mapStateToProps(state) {
+  return state
+}
+
+export default connect(mapStateToProps)(App);
