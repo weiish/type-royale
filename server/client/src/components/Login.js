@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import * as actions from "../actions";
+import { connectSocket } from '../store/socket/actions'; 
 
 class Login extends React.Component {
    constructor(props) {
@@ -10,7 +10,7 @@ class Login extends React.Component {
    }
 
   componentDidUpdate() {
-      if (this.props.connection !== null) {
+      if (this.props.connection.connected === true) {
         this.props.history.push('/lobby')
       }
   }
@@ -21,13 +21,13 @@ class Login extends React.Component {
 
   renderContent() {
     const {username} = this.state
-    switch (this.props.connection) {
-      case null:
+    switch (this.props.connection.connected) {
+      case false:
         return (
           <div>
             <h1>Please choose a username</h1>
             <input onChange={this.handleUsernameChange} type="text" placeholder="Username"></input>
-            <button onClick={() => this.props.connectIO(username)}>Connect</button>
+            <button onClick={() => this.props.connectSocket(username)}>Connect</button>
           </div>
         );
       default:
@@ -48,13 +48,17 @@ class Login extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    connection: state.connection
-  };
-}
+const mapStateToProps = (state) => {
+    return {
+        connection: state.connection
+    }
+};
+
+const mapDispatchToProps = (dispatch) => ({
+    connectSocket: (user) => dispatch(connectSocket(user))
+})
 
 export default connect(
   mapStateToProps,
-  actions
+  mapDispatchToProps
 )(Login);

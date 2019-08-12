@@ -6,7 +6,7 @@ class Lobby extends React.Component {
     render() {
         return (
             <div>
-                <h1>Welcome {this.props.connection.username}</h1>
+                <h1>Welcome {this.props.connection.user}</h1>
             </div>
         )
 
@@ -14,7 +14,8 @@ class Lobby extends React.Component {
 }
 
 function mapStateToProps(state) {
-    return state
+    console.log(state)
+    return {connection: state.connection}
 }
 
 export default connect(mapStateToProps)(Lobby);

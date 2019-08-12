@@ -4,10 +4,11 @@ import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 import { createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
-import reducers from "./reducers";
-import reduxThunk from 'redux-thunk'
+import reducers from "./store/reducers";
+import reduxThunk from "redux-thunk";
+import socketMiddleware from "./store/socket/middleware";
 
-const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
+const store = createStore(reducers, {}, applyMiddleware(socketMiddleware, reduxThunk));
 
 ReactDOM.render(
   <Provider store={store}>
