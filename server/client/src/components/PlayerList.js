@@ -5,7 +5,7 @@ class PlayerList extends React.Component {
     render() {
         return (
             <div>
-            
+                <h2>Player List</h2>
             </div>
         )
 

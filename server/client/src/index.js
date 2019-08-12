@@ -4,7 +4,7 @@ import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 import { createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
-import reducers from "./store/reducers";
+import reducers from "./store/socket/reducer";
 import reduxThunk from "redux-thunk";
 import socketMiddleware from "./store/socket/middleware";
 

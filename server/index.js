@@ -4,9 +4,20 @@ const server = require('http').Server(app);
 const {addUser, removeUser, getUser, getUsersInRoom} = require('./utils/users')
 const {generateMessage} = require('./utils/messages')
 const io = require('socket.io').listen(server);
+const Protocol = require("./constants/Protocol.js");
+const Lobby = require('./utils/lobby')
+const shortid = require('shortid');
+
+var lobbyList = [];
 
 io.on('connection', socket => {
     console.log('a user connected: ', socket.id)
+
+    socket.on(Protocol.CREATE_ROOM, (callback) => {
+        //Create new room with a random id
+        let newLobby = new Lobby(shortid.generate(), socket.id)
+    })
+
     socket.on('join', ({username, room}, callback) => {
         //Callback is for telling the client that the server processed their 'join' event
         const {error, user} = addUser({id: socket.id, username, room})

@@ -2,9 +2,9 @@ import * as Protocol from "../../../constants/Protocol.js";
 import io from "socket.io-client";
 
 export default class Socket {
-  constructor(onConnected, onMessage, onRoomData) {
+  constructor(onConnected, onMessage, onLobbyData) {
     this.onMessage = onMessage;
-    this.onRoomData = onRoomData;
+    this.onRoomData = onLobbyData;
     this.onConnected = onConnected;
     this.socket = null;
     this.user = null;
@@ -15,10 +15,11 @@ export default class Socket {
     this.user = user;
     const host = `http://localhost:${this.port}`;
     this.socket = io.connect(host);
-    console.log('The user is ', user)
 
     this.onConnected(user)
   };
+
+  requestCreateLobby = () => this.socket.emit(Protocol.CREATE_ROOM)
 
   sendIM = message => this.socket.emit(Protocol.MESSAGE, message)
 }

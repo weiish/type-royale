@@ -1,6 +1,6 @@
 import Socket from "./Socket";
 import { messageReceived, SEND_MESSAGE } from "../../message/actions";
-
+import { CREATE_LOBBY } from '../../game/actions'
 import { CONNECT_SOCKET, CONNECTION_CONFIRMED, connectionConfirmed } from "../actions";
 
 const socketMiddleware = store => {
@@ -21,6 +21,8 @@ const socketMiddleware = store => {
     switch (action.type) {
       case CONNECT_SOCKET:
         socket.connect(action.user);
+      case CREATE_LOBBY:
+        
       default:
         console.log("Socket middleware will ignore this action");
     }

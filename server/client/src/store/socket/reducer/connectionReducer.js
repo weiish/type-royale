@@ -1,5 +1,4 @@
-import {START_IO} from '../actions/types'
-import { CONNECTION_CONFIRMED } from '../socket/actions'
+import { CONNECTION_CONFIRMED } from '../actions'
 
 export default function (state = {connected: false, user: undefined}, action) {
     switch (action.type) {
