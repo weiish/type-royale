@@ -3,28 +3,30 @@ import io from 'socket.io-client';
 import { BrowserRouter, Route, Link } from 'react-router-dom'
 import {connect} from 'react-redux'
 import Login from './Login'
-import Lobby from './Lobby'
 import Main from './Main'
 import JoinGame from './JoinGame'
-import GameLobby from './GameLobby'
+import GameRoom from './GameRoom'
 
 class App extends React.Component {
 
   constructor() {
     super();
   }
+
+  renderLogic() {
+    if (this.props.game.room !== null) {
+      return <GameRoom />
+    } else {
+      return <Main />
+    }
+  }
   
   render() {
     return (
       <div>
-        <BrowserRouter>
           <div className="App">
-            <Route exact path="/" component={Main} />
-            <Route exact path="/create" component={GameLobby} />
-            <Route exact path="/join" component={JoinGame} />
-            <Route exact path="/lobby" component={Lobby} />
+            {this.renderLogic()}
           </div>
-        </BrowserRouter>
       </div>
 
     );

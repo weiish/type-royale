@@ -1,19 +1,19 @@
 const users = []
  
-const addUser = ({ id, username, room }) => {
+const addUser = ({ id, username, room_id }) => {
+
     //Clean the data
     username = username.trim().toLowerCase()
-    room = room.trim().toLowerCase()
 
     // Validate the data
-    if (!username || !room) {
+    if (!username) {
         return {
-            error: 'Username and room are required.'
+            error: 'Username is required.'
         }
     }
 
     // Store user
-    const user = { id, username, room }
+    const user = { id, username, room_id }
     users.push(user)
     return { user }
 }

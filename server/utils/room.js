@@ -1,20 +1,20 @@
-class Lobby {
+class Room {
     constructor(id, hostID) {
         this.id = id; //Room name
-        this.playerList = [hostID]; //List of socket.io IDs that are in this game
+        this.playerList = []; //List of socket.io IDs that are in this game
         this.settings = {};
         this.gameStarted = false;
         this.gameState = {};
         this.hostID = hostID;
     }
 
-    addPlayer(playerID) {
-        this.playerList.push(playerID)
+    addPlayer(playerObject) {
+        this.playerList.push(playerObject)
     }
     
     remPlayer(playerID) {
-        this.playerList = this.playerList.filter((existingID) => {
-            return existingID !== playerID
+        this.playerList = this.playerList.filter((player) => {
+            return player.id !== playerID
         })
     }
 
@@ -23,4 +23,4 @@ class Lobby {
     }
 }
 
-module.exports = Lobby
+module.exports = Room

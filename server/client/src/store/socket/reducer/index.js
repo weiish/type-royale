@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
 import connectionReducer from './connectionReducer';
+import gameReducer from '../../game/reducer'
 
 export default combineReducers({
-    connection: connectionReducer
+    connection: connectionReducer,
+    game: gameReducer
 })

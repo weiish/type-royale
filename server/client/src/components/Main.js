@@ -1,28 +1,20 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import {createRoom} from '../store/game/actions'
+import { connectSocket } from '../store/socket/actions'; 
+import {connect} from 'react-redux'
 
 class Main extends Component {
   constructor(props) {
     super(props);
     this.state = { name: "" };
     this.handleInput = this.handleInput.bind(this);
+    this.handleCreate = this.handleCreate.bind(this);
   }
 
-  renderButtons() {
-    if (this.validInput(this.state.name)) {
-      return (
-        <div>
-          <Link to="/create">Create Game</Link>
-          <Link to="/join">Join Game</Link>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <p>Please enter a valid username (No special characters or spaces)</p>
-        </div>
-      );
-    }
+  handleCreate() {
+    console.log('Handling Create Room, current name is...',this.state.name)
+    this.props.connectSocket(this.state.name)
+    this.props.createRoom(this.state.name)
   }
 
   validInput(input) {
@@ -40,6 +32,23 @@ class Main extends Component {
     });
   }
 
+  renderButtons() {
+    if (this.validInput(this.state.name)) {
+      return (
+        <div>
+          <button onClick={this.handleCreate}>Create Game</button>
+          <button>Join Game</button>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <p>Please enter a valid username (No special characters or spaces)</p>
+        </div>
+      );
+    }
+  }
+
   render() {
     return (
       <div>
@@ -55,4 +64,9 @@ class Main extends Component {
   }
 }
 
-export default Main;
+const mapDispatchToProps = (dispatch) => ({
+    createRoom: (user) => dispatch(createRoom(user)),
+    connectSocket: (user) => dispatch(connectSocket(user))
+})
+
+export default connect(null, mapDispatchToProps)(Main);
