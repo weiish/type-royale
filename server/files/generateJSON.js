@@ -28,7 +28,7 @@ readInterface.on("line", line => {
   counter++;
 });
 
-readInterface.on("end", () => {
+readInterface.on("close", () => {
   console.log(words);
   console.log("Writing to file");
   let words_json = JSON.stringify(words);
