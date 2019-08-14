@@ -1,11 +1,9 @@
 import React from 'react';
-import io from 'socket.io-client';
-import { BrowserRouter, Route, Link } from 'react-router-dom'
 import {connect} from 'react-redux'
-import Login from './Login'
 import Main from './Main'
-import JoinGame from './JoinGame'
 import GameRoom from './GameRoom'
+import JoinGame from './JoinGame'
+import Header from './Header'
 
 class App extends React.Component {
 
@@ -16,6 +14,8 @@ class App extends React.Component {
   renderLogic() {
     if (this.props.game.room !== null) {
       return <GameRoom />
+    } else if (this.props.game.join_page) {
+      return <JoinGame />
     } else {
       return <Main />
     }
@@ -25,6 +25,7 @@ class App extends React.Component {
     return (
       <div>
           <div className="App">
+            <Header />
             {this.renderLogic()}
           </div>
       </div>

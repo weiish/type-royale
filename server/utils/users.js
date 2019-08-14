@@ -1,21 +1,14 @@
-const users = []
+let users = []
  
-const addUser = ({ id, username, room_id }) => {
+const addUser = ({ id, username=null, room_id=null }) => {
 
     //Clean the data
-    username = username.trim().toLowerCase()
-
-    // Validate the data
-    if (!username) {
-        return {
-            error: 'Username is required.'
-        }
-    }
+    if (username) username = username.trim().toLowerCase()
 
     // Store user
-    const user = { id, username, room_id }
+    let user = { id, username, room_id }
     users.push(user)
-    return { user }
+    return user
 }
 
 const removeUser = (id) => {
@@ -35,10 +28,23 @@ const getUser = (id) => {
     })
 }
 
+const setUsername = (id, username) => {
+    const index = users.findIndex(user => {
+        return user.id === id
+    })
+    users[index].username = username.trim()
+}
+const setUserRoom = (id, room_id) => {
+    const index = users.findIndex(user => {
+        return user.id === id
+    })
+    users[index].room_id = room_id
+}
+
 const getUsersInRoom = (room) => {
     return users.filter((user) => {
         return user.room.trim().toLowerCase() === room.trim().toLowerCase()
     })
 }
 
-module.exports = { addUser, removeUser, getUser, getUsersInRoom}
+module.exports = { addUser, removeUser, setUsername, setUserRoom, getUser, getUsersInRoom}

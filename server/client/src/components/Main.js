@@ -1,20 +1,36 @@
 import React, { Component } from "react";
-import {createRoom} from '../store/game/actions'
-import { connectSocket } from '../store/socket/actions'; 
-import {connect} from 'react-redux'
+import { createRoom, showJoinPage } from "../store/game/actions";
+import { connectSocket, setUsername } from "../store/socket/actions";
+import { connect } from "react-redux";
 
 class Main extends Component {
   constructor(props) {
     super(props);
-    this.state = { name: "" };
+    this.state = { name: "", connecting: false };
     this.handleInput = this.handleInput.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
+    this.handleJoin = this.handleJoin.bind(this);
+    this.checkConnecting = this.checkConnecting.bind(this);
   }
 
   handleCreate() {
-    console.log('Handling Create Room, current name is...',this.state.name)
-    this.props.connectSocket(this.state.name)
-    this.props.createRoom(this.state.name)
+    console.log("Handling Create Room, current name is...", this.state.name);
+    this.setState({ connecting: false });
+    this.props.connectSocket();
+    this.props.setUsername(this.state.name);
+    this.props.createRoom(this.state.name);
+    this.setState({ connecting: true });
+  }
+
+  checkConnecting() {
+    return this.state.connecting;
+  }
+
+  handleJoin() {
+    console.log("Handling Join Room Page... current name is ", this.state.name);
+    this.props.connectSocket();
+    this.props.setUsername(this.state.name);
+    this.props.showJoinPage();
   }
 
   validInput(input) {
@@ -23,6 +39,7 @@ class Main extends Component {
     if (input.match(regex) !== null) {
       return false;
     }
+    if (input.toLowerCase() === "system") return false;
     return true;
   }
 
@@ -36,8 +53,12 @@ class Main extends Component {
     if (this.validInput(this.state.name)) {
       return (
         <div>
-          <button onClick={this.handleCreate}>Create Game</button>
-          <button>Join Game</button>
+          <button disabled={this.checkConnecting()} onClick={this.handleCreate}>
+            {!this.checkConnecting() ? "Create Game" : "Connecting..."}
+          </button>
+          <button disabled={this.checkConnecting()} onClick={this.handleJoin}>
+            Join Game
+          </button>
         </div>
       );
     } else {
@@ -51,8 +72,7 @@ class Main extends Component {
 
   render() {
     return (
-      <div>
-        <h1>Type Royale</h1>
+      <div className="main">
         <input
           onChange={this.handleInput}
           type="text"
@@ -64,9 +84,14 @@ class Main extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-    createRoom: (user) => dispatch(createRoom(user)),
-    connectSocket: (user) => dispatch(connectSocket(user))
-})
+const mapDispatchToProps = dispatch => ({
+  createRoom: user => dispatch(createRoom(user)),
+  connectSocket: user => dispatch(connectSocket(user)),
+  showJoinPage: () => dispatch(showJoinPage()),
+  setUsername: username => dispatch(setUsername(username))
+});
 
-export default connect(null, mapDispatchToProps)(Main);
+export default connect(
+  null,
+  mapDispatchToProps
+)(Main);
