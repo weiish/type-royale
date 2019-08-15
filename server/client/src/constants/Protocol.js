@@ -18,3 +18,10 @@ export const SET_MAX_WORD_LENGTH = 'set_max_word_length'
 export const SET_MIN_WORD_LENGTH = 'set_min_word_length'
 export const SET_POWER_UPS = 'set_power_ups'
 export const SET_ALLOW_SPECTATORS = 'set_allow_spectators'
+
+//Game
+export const TIME_UPDATE       = 'time_update'
+export const GAME_STATE        = 'game_state'
+export const PLAYER_INPUT      = 'player_input'
+export const SEND_WORD         = 'send_word'
+export const START_GAME        = 'start_game'

@@ -3,9 +3,9 @@ const shortid = require("shortid");
 var rooms = [];
 
 class Room {
-  constructor(id, hostID) {
-    this.id = id; //Room name
-    this.playerList = []; //List of socket.io IDs that are in this game
+  constructor(hostID) {
+    this.id = shortid.generate(); //Room name
+    this.playerList = []; //List of player objects which contain the socket id and username
     this.settings = {
       spawnDelay: 5,
       maxWordLength: 10,
@@ -14,8 +14,20 @@ class Room {
       allowSpectate: false
     };
     this.gameStarted = false;
-    this.gameState = {};
+    this.gameID = null;
     this.hostID = hostID;
+  }
+
+  startGame(game_id) {
+      if (!this.gameStarted) {
+        this.gameStarted = true;
+        this.gameID = game_id;
+      }
+  }
+
+  onGameOver() {
+      this.gameStarted = false;
+      //When game tells room that the game is over, the room should....
   }
 
   addPlayer(playerObject) {
@@ -53,8 +65,8 @@ class Room {
   }
 }
 
-const createRoom = socketID => {
-  let newRoom = new Room(shortid.generate(), socketID);
+const createRoom = hostSocketID => {
+  let newRoom = new Room(hostSocketID);
   rooms.push(newRoom);
   return newRoom;
 };

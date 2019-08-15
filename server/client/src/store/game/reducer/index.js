@@ -8,7 +8,8 @@ import {
     SET_MAX_WORD_LENGTH,
     SET_MIN_WORD_LENGTH,
     SET_POWER_UPS,
-    SET_ALLOW_SPECTATORS
+    SET_ALLOW_SPECTATORS,
+    TIME_UPDATE
 } from '../actions';
 
 
@@ -18,7 +19,9 @@ import {
 // HOST WILL CHECK IF CLIENT IS THE HOST, AND IGNORE REQUEST IF NOT HOST
 const INITIAL_STATE = {
     room: null,
-    join_page: false
+    join_page: false,
+    elapsedTime: 0,
+    timeUntilSpawn: 0
 }
 
 export default function gameReducer(state = INITIAL_STATE, action) {
@@ -31,7 +34,12 @@ export default function gameReducer(state = INITIAL_STATE, action) {
             return Object.assign({}, state, {
                 room: action.roomData
             })
-        
+        case TIME_UPDATE:
+            console.log(action.elapsedTime)
+            return Object.assign({}, state, {
+                elapsedTime: action.elapsedTime,
+                timeUntilSpawn: action.timeUntilSpawn
+            })
         default:
             return state;
     }

@@ -1,7 +1,6 @@
 import { RECEIVE_MESSAGE, MESSAGE_SENT, RECEIVE_SYSTEM_MESSAGE } from "../actions";
 
 const INITIAL_STATE = {
-  user: undefined,
   messages: [],
   systemMessages: []
 };

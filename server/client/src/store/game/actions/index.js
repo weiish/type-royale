@@ -10,6 +10,9 @@ export const SET_MIN_WORD_LENGTH  = 'game/set-min-word-length'
 export const SET_POWER_UPS  = 'game/set-power-ups'
 export const SET_ALLOW_SPECTATORS  = 'game/set-allow-spectators'
 
+export const START_GAME     ='game/start-game'
+export const TIME_UPDATE    ='game/time-update'
+
 export const createRoom = (user) => {
     //user = username
     return {
@@ -75,3 +78,16 @@ export const setAllowSpectators = (value) => {
     }
 }
 
+export const startGame = () => {
+    return {
+        type: START_GAME,
+    }
+}
+
+export const updateTime = (elapsedTime, timeUntilSpawn) => {
+    return {
+        type: TIME_UPDATE,
+        elapsedTime,
+        timeUntilSpawn
+    }
+}

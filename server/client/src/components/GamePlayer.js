@@ -2,23 +2,34 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 class GamePlayer extends Component {
+  constructor(props) {
+    super(props);
+    this.renderWordList = this.renderWordList.bind(this);
+  }
+
+  renderWordList() {
+    return this.props.gameState[this.props.id].words.map((word, index) => {
+      <p key={index}>word</p>;
+    });
+  }
+
   render() {
     return (
       <div>
-        <h1>Settings</h1>
-        <ul>
-            <li>Spawn Delay: {this.props.settings.spawnDelay}</li>
-            <li>Max Word Length: {this.props.settings.maxWordLength}</li>
-            <li>Min Word Length: {this.props.settings.minWordLength}</li>
-            <li>Power Ups: {this.props.settings.powerUps ? 'On' : 'Off'}</li>
-            <li>Allow Spectators: {this.props.settings.allowSpectators ? 'On' : 'Off'}</li>
-        </ul>
+        <h1>{this.props.gameState[this.props.id].name}</h1>
+        <h2>{this.props.gameState[this.props.id].status}</h2>
+        {this.renderWordList()}
+        <input type="text" placeholder="Type words here!" />
+        <button>Send Word</button>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => {
-    return {settings: state.game.room.settings}
-}
+const mapStateToProps = state => {
+  return {
+    gameState: state.game.room.gameState,
+    id: state.connection.user_id
+  };
+};
 export default connect(mapStateToProps)(GamePlayer);

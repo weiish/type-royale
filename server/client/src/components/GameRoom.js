@@ -4,12 +4,23 @@ import PlayerList from "./PlayerList";
 import GameSettings from "./GameSettings";
 import GameChat from "./GameChat";
 
+import { startGame } from "../store/game/actions";
+
 class GameRoom extends Component {
   render() {
     return (
       <div>
         <h1>Game Room</h1>
         <h2>Room ID: {this.props.game.room.id}</h2>
+        <h3>
+          Status:{" "}
+          {this.props.game.room.gameStarted
+            ? "In Progress"
+            : "Waiting for players"}
+        </h3>
+        <h3>Time: {this.props.game.elapsedTime/1000}</h3>
+        <h3>Spawn: {this.props.game.timeUntilSpawn/1000}</h3>
+        <button onClick={this.props.startGame}>Start Game</button>
         <GameSettings />
         <PlayerList />
         <GameChat />
@@ -21,4 +32,11 @@ class GameRoom extends Component {
 const mapStateToProps = state => {
   return state;
 };
-export default connect(mapStateToProps)(GameRoom);
+
+const mapDispatchToProps = dispatch => {
+  return { startGame: () => dispatch(startGame()) };
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GameRoom);

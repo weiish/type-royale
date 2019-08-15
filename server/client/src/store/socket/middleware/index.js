@@ -9,7 +9,9 @@ import {
   SET_MAX_WORD_LENGTH,
   SET_MIN_WORD_LENGTH,
   SET_POWER_UPS,
-  SET_ALLOW_SPECTATORS
+  SET_ALLOW_SPECTATORS,
+  START_GAME,
+  updateTime
 } from "../../game/actions";
 import { CONNECT_SOCKET, connectionConfirmed, SET_USERNAME } from "../actions";
 import { joinRoomError, changeSettingError } from "../../errors/actions";
@@ -33,6 +35,10 @@ const socketMiddleware = store => {
     store.dispatch(connectionConfirmed(user_id));
   };
 
+  const onTimeUpdate = ({elapsedTime, timeUntilSpawn}) => {
+    store.dispatch(updateTime(elapsedTime, timeUntilSpawn));
+  }
+
   const onReceiveError = error => {
     //Parse the error to see what kind of error it is, and dispatch accordingly
     console.log("Got an error");
@@ -49,7 +55,7 @@ const socketMiddleware = store => {
     }
   };
 
-  const socket = new Socket(onConnected, onMessage, onSystemMessage, onRoomData, onReceiveError);
+  const socket = new Socket(onConnected, onMessage, onSystemMessage, onRoomData, onReceiveError, onTimeUpdate);
 
   return next => action => {
     switch (action.type) {
@@ -91,6 +97,9 @@ const socketMiddleware = store => {
         break;
       case SET_ALLOW_SPECTATORS:
         socket.requestSetAllowSpectate(action.value);
+        break;
+      case START_GAME:
+        socket.requestStartGame();
         break;
       default:
         console.log("Socket middleware will ignore this action ", action.type);
