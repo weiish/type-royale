@@ -27,8 +27,7 @@ class PlayerList extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log('PlayerList Props=',state.game.room.playerList)
-    return {playerList: state.game.room.playerList}
+    return {playerList: state.room.room.playerList}
 }
 
 export default connect(mapStateToProps)(PlayerList);

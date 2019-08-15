@@ -11,10 +11,10 @@ class GameRoom extends Component {
     return (
       <div>
         <h1>Game Room</h1>
-        <h2>Room ID: {this.props.game.room.id}</h2>
+        <h2>Room ID: {this.props.room.room.id}</h2>
         <h3>
           Status:{" "}
-          {this.props.game.room.gameStarted
+          {this.props.room.room.gameStarted
             ? "In Progress"
             : "Waiting for players"}
         </h3>
@@ -30,7 +30,10 @@ class GameRoom extends Component {
 }
 
 const mapStateToProps = state => {
-  return state;
+  return {
+    room: state.room,
+    game: state.game
+  };
 };
 
 const mapDispatchToProps = dispatch => {

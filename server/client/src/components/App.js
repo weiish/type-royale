@@ -12,9 +12,9 @@ class App extends React.Component {
   }
 
   renderLogic() {
-    if (this.props.game.room !== null) {
+    if (this.props.room.room !== null) {
       return <GameRoom />
-    } else if (this.props.game.join_page) {
+    } else if (this.props.room.join_page) {
       return <JoinGame />
     } else {
       return <Main />

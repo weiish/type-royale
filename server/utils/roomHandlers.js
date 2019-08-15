@@ -15,7 +15,7 @@ const userIsHost = (user, room) => {
   return user.id === room.hostID;
 };
 
-const handleCreateRoom = (socket) => {
+const handleCreateRoom = socket => {
   console.log("Server got Create Room Request from socket id:", socket.id);
   let newRoom = createRoom(socket.id);
   setUserRoom(socket.id, newRoom.id);
@@ -42,15 +42,26 @@ const handleJoinRoom = (socket, io, username, room_id) => {
     existingRoom.addPlayer(user);
     socket.join(existingRoom.id);
     io.to(room_id).emit(Protocol.ROOM_DATA, existingRoom);
-    socket.broadcast.to(room_id).emit(Protocol.SYSTEM_MESSAGE, generateMessage('System', `${user.username} has joined.`))
+    socket.broadcast
+      .to(room_id)
+      .emit(
+        Protocol.SYSTEM_MESSAGE,
+        generateMessage("System", `${user.username} has joined.`)
+      );
   }
-}
+};
 
 const handleSetSpawnDelay = (socket, io, value) => {
   if (value >= 1 && value <= 10) {
     const user = getUser(socket.id);
     const room = getRoom(user.room_id);
     if (userIsHost(user, room)) {
+      if (room.gameStarted) {
+        return socket.emit(Protocol.ENCOUNTERED_ERROR, {
+          type: ErrorProtocol.ERR_PERMISSIONS,
+          error: "Cannot edit settings while game is in progress"
+        });
+      }
       room.setSpawnDelay(value);
       io.to(room.id).emit(Protocol.ROOM_DATA, room);
     } else {
@@ -73,6 +84,12 @@ const handleSetMaxWordLength = (socket, io, value) => {
 
   if (value >= room.settings.minWordLength && value <= 10) {
     if (userIsHost(user, room)) {
+      if (room.gameStarted) {
+        return socket.emit(Protocol.ENCOUNTERED_ERROR, {
+          type: ErrorProtocol.ERR_PERMISSIONS,
+          error: "Cannot edit settings while game is in progress"
+        });
+      }
       room.setMaxWordLength(value);
       io.to(room.id).emit(Protocol.ROOM_DATA, room);
     } else {
@@ -95,6 +112,12 @@ const handleSetMinWordLength = (socket, io, value) => {
 
   if (value >= 1 && value <= room.settings.maxWordLength) {
     if (userIsHost(user, room)) {
+      if (room.gameStarted) {
+        return socket.emit(Protocol.ENCOUNTERED_ERROR, {
+          type: ErrorProtocol.ERR_PERMISSIONS,
+          error: "Cannot edit settings while game is in progress"
+        });
+      }
       room.setMinWordLength(value);
       io.to(room.id).emit(Protocol.ROOM_DATA, room);
     } else {
@@ -116,6 +139,12 @@ const handleSetPowerUps = (socket, io, value) => {
     const user = getUser(socket.id);
     const room = getRoom(user.room_id);
     if (userIsHost(user, room)) {
+      if (room.gameStarted) {
+        return socket.emit(Protocol.ENCOUNTERED_ERROR, {
+          type: ErrorProtocol.ERR_PERMISSIONS,
+          error: "Cannot edit settings while game is in progress"
+        });
+      }
       room.setPowerUps(value);
       io.to(room.id).emit(Protocol.ROOM_DATA, room);
     } else {
@@ -137,6 +166,12 @@ const handleSetAllowSpectators = (socket, io, value) => {
     const user = getUser(socket.id);
     const room = getRoom(user.room_id);
     if (userIsHost(user, room)) {
+      if (room.gameStarted) {
+        return socket.emit(Protocol.ENCOUNTERED_ERROR, {
+          type: ErrorProtocol.ERR_PERMISSIONS,
+          error: "Cannot edit settings while game is in progress"
+        });
+      }
       room.setAllowSpectate(value);
       io.to(room.id).emit(Protocol.ROOM_DATA, room);
     } else {

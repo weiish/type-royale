@@ -14,6 +14,7 @@ const io = require("socket.io").listen(server);
 const Protocol = require("./constants/Protocol.js");
 const ErrorProtocol = require("./constants/ErrorProtocol.js");
 const { Room, createRoom, deleteRoom, getRoom } = require("./utils/room");
+const { Game, createGame, deleteGame, getGame } = require('./utils/game')
 const {
   handleCreateRoom,
   handleJoinRoom,
@@ -39,7 +40,8 @@ io.on("connection", socket => {
     const user = getUser(socket.id);
     const room = getRoom(user.room_id);
     if (userIsHost(user, room)) {
-      handleStartNewGame(socket, io, room.id);
+      const {newGame, updatedRoom} = handleStartNewGame(socket, io, room.id);
+      io.to(room.id).emit(Protocol.ROOM_DATA, room);
     } else {
       socket.emit(Protocol.ENCOUNTERED_ERROR, {
         type: ErrorProtocol.ERR_PERMISSIONS,
@@ -103,6 +105,9 @@ io.on("connection", socket => {
       socket.leave(room.id);
       room.remPlayer(socket.id);
       if (room.playerList.length === 0) {
+        //Delete game object in game if any existed
+        console.log('Room is empty! Deleting Game and Room')
+        deleteGame(room.gameID)
         deleteRoom(room.id);
       } else {
         io.to(room.id).emit(Protocol.ROOM_DATA, room);

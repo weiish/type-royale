@@ -28,7 +28,7 @@ class GamePlayer extends Component {
 
 const mapStateToProps = state => {
   return {
-    gameState: state.game.room.gameState,
+    gameState: state.room.room.gameState,
     id: state.connection.user_id
   };
 };

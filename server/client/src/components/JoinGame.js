@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { joinRoom } from "../store/game/actions";
+import { joinRoom } from "../store/room/actions";
 import { connectSocket } from "../store/socket/actions";
 
 class JoinGame extends Component {

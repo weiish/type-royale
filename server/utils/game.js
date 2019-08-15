@@ -87,11 +87,24 @@ class Game {
     console.log("Game ", this.id, "started!");
     this.gameStarted = true;
     this.startTimer();
+    this.sendGameState(this.generateGameStatePacket())
+  }
+
+  generateGameStatePacket() {
+    return {
+      //What should be sent to all players in a game state packet?
+      playerStates: this.playerStates,
+      gameStarted: this.gameStarted,
+    }
   }
 
   endGame() {
     this.gameStarted = false;
     this.stopTimer();
+  }
+
+  onDelete() {
+    this.endGame();
   }
 
   onTimerTick() {
@@ -155,6 +168,8 @@ const deleteGame = game_id => {
   });
 
   if (game_index !== -1) {
+    //Stop any timers in the game
+    games[game_index].onDelete();
     return games.splice(game_index, 1);
   } else {
     return { error: "Could not find game to delete" };

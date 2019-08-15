@@ -28,7 +28,9 @@ const handleStartNewGame = (socket, io, room_id) => {
     let room = getRoom(room_id);
     let newGame = createGame(room, onSendTimeUpdates, onSendGameState, onSendPlayerInputs);
     newGame.startGame()
-    room.startGame()
+    room.startGame(newGame.id)
+
+    return {newGame, updatedRoom: room}
 }
 
 module.exports = {handleStartNewGame}

@@ -12,6 +12,6 @@ class GameOtherPlayer extends Component {
 }
 
 const mapStateToProps = (state) => {
-    return {settings: state.game.room.settings}
+    return {settings: state.room.room.settings}
 }
 export default connect(mapStateToProps)(GameOtherPlayer);

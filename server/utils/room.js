@@ -19,10 +19,11 @@ class Room {
   }
 
   startGame(game_id) {
-      if (!this.gameStarted) {
-        this.gameStarted = true;
-        this.gameID = game_id;
-      }
+    if (!this.gameStarted) {
+      this.gameID = game_id;
+      this.gameStarted = true;
+    }
+      
   }
 
   onGameOver() {

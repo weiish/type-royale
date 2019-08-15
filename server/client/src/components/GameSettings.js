@@ -8,7 +8,7 @@ import {
   setMinWordLength,
   setPowerUps,
   setAllowSpectators
-} from "../store/game/actions";
+} from "../store/room/actions";
 
 class GameSettings extends Component {
   constructor(props) {
@@ -30,7 +30,7 @@ class GameSettings extends Component {
           minValue={1}
           value={this.props.spawnDelay}
           onChange={value => this.props.setSpawnDelay(value)}
-          disabled={!this.isHost()}
+          disabled={!this.isHost() || this.props.gameStarted}
         />
       </li>
     );
@@ -52,7 +52,7 @@ class GameSettings extends Component {
             this.props.setMinWordLength(value.min);
             this.props.setMaxWordLength(value.max);
           }}
-          disabled={!this.isHost()}
+          disabled={!this.isHost() || this.props.gameStarted}
         />
       </li>
     );
@@ -60,7 +60,7 @@ class GameSettings extends Component {
 
   renderPowerUps() {
     let checkBox;
-    if (this.isHost()) {
+    if (this.isHost() && !this.props.gameStarted) {
       checkBox = (
         <input
           onClick={() => this.props.setPowerUps(!this.props.powerUps)}
@@ -79,7 +79,7 @@ class GameSettings extends Component {
 
   renderSpectator() {
     let checkBox;
-    if (this.isHost()) {
+    if (this.isHost() && !this.props.gameStarted) {
       checkBox = (
         <input
           onClick={() =>
@@ -121,9 +121,10 @@ const mapStateToProps = state => {
     minWordLength,
     powerUps,
     allowSpectate
-  } = state.game.room.settings;
+  } = state.room.room.settings;
 
-  const hostID = state.game.room.hostID;
+  const gameStarted = state.room.room.gameStarted;
+  const hostID = state.room.room.hostID;
   const myID = state.connection.user_id;
 
   return {
@@ -133,7 +134,8 @@ const mapStateToProps = state => {
     powerUps,
     allowSpectate,
     hostID,
-    myID
+    myID,
+    gameStarted
   };
 };
 

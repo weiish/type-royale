@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { createRoom, showJoinPage } from "../store/game/actions";
+import { createRoom, showJoinPage } from "../store/room/actions";
 import { connectSocket, setUsername } from "../store/socket/actions";
 import { connect } from "react-redux";
 

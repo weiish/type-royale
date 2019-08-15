@@ -2,6 +2,10 @@ import Socket from "./Socket";
 import { messageReceived, SEND_MESSAGE, systemMessageReceived } from "../../message/actions";
 import * as ErrorProtocol from "../../../constants/ErrorProtocol.js";
 import {
+  START_GAME,
+  updateTime
+} from "../../game/actions";
+import {
   CREATE_ROOM,
   JOIN_ROOM,
   updateRoom,
@@ -9,10 +13,8 @@ import {
   SET_MAX_WORD_LENGTH,
   SET_MIN_WORD_LENGTH,
   SET_POWER_UPS,
-  SET_ALLOW_SPECTATORS,
-  START_GAME,
-  updateTime
-} from "../../game/actions";
+  SET_ALLOW_SPECTATORS
+} from "../../room/actions";
 import { CONNECT_SOCKET, connectionConfirmed, SET_USERNAME } from "../actions";
 import { joinRoomError, changeSettingError } from "../../errors/actions";
 
