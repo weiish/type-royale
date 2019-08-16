@@ -63,7 +63,6 @@ io.on("connection", socket => {
     const user = getUser(socket.id);
     const room = getRoom(user.room_id);
     const game = getGame(room.game_id);
-    console.log('Got player input!')
     if (game) {
       game.updatePlayerInput(user.id, input)
     }

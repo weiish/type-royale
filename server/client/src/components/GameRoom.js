@@ -18,7 +18,6 @@ class GameRoom extends Component {
         }
       }
     } else {
-      console.log('i condition ',this.props.room.room.playerList.length - 1);
       for (let i = 0; i < this.props.room.room.playerList.length - 1; i++) {
         console.log('Pushing another player')
         content.push(<GameOtherPlayer />)

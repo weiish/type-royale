@@ -82,7 +82,7 @@ const handleSetMaxWordLength = (socket, io, value) => {
   const user = getUser(socket.id);
   const room = getRoom(user.room_id);
 
-  if (value >= room.settings.minWordLength && value <= 10) {
+  if (value >= room.settings.minWordLength && value <= 31) {
     if (userIsHost(user, room)) {
       if (room.gameStarted) {
         return socket.emit(Protocol.ENCOUNTERED_ERROR, {

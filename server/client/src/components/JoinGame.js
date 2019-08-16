@@ -9,6 +9,9 @@ class JoinGame extends Component {
     this.handleInput = this.handleInput.bind(this);
     this.handleJoin = this.handleJoin.bind(this);
     this.renderError = this.renderError.bind(this);
+    this.state={
+      code: ""
+    }
   }
 
   handleInput(e) {
@@ -18,8 +21,7 @@ class JoinGame extends Component {
   }
 
   handleJoin() {
-    console.log("Sending join request with user=",this.props.user,'and room=',this.state.code);    
-    this.props.joinRoom(this.props.user, this.state.code);
+    if (this.state.code.length > 0)  this.props.joinRoom(this.props.user, this.state.code);
   }
 
   renderError() {

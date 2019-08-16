@@ -1,7 +1,9 @@
 const shortid = require("shortid");
 const MAX_WORD_LIST_LENGTH = 30;
+const INITIAL_WORD_LIST_LENGTH = 10;
 const PLAYER_STATUS_ALIVE = "alive";
 const PLAYER_STATUS_DEAD = "dead";
+const { generateRandomWord } = require("./words");
 var games = [];
 
 /*
@@ -65,19 +67,21 @@ class Game {
 
   handlePlayerSendWord(player_id) {
     if (this.playerStates[player_id].status === PLAYER_STATUS_ALIVE) {
-      const currentInput = this.playerStates[player_id].input.trim().toLowerCase()
+      const currentInput = this.playerStates[player_id].input
+        .trim()
+        .toLowerCase();
       const removedWord = this.tryRemWordFromPlayer(player_id, currentInput);
-      this.playerStates[player_id].input = ''
+      this.playerStates[player_id].input = "";
       if (removedWord) {
         //Generate word of equal length and send to target player
         const targetList = this.playerList.filter(player => {
-          return player.id !== player_id
-        })
-        const targetPlayerIndex = Math.floor(Math.random() * targetList.length)
-        
-        this.addWordToPlayer(targetList[targetPlayerIndex].id, 'attack');
-      } 
-      this.sendGameState(this.generateGameStatePacket())
+          return player.id !== player_id;
+        });
+        const targetPlayerIndex = Math.floor(Math.random() * targetList.length);
+        const randomWord = generateRandomWord(removedWord[0].length);
+        this.addWordToPlayer(targetList[targetPlayerIndex].id, randomWord);
+      }
+      this.sendGameState(this.generateGameStatePacket());
     }
   }
 
@@ -91,16 +95,15 @@ class Game {
     if (index > -1) {
       return this.playerStates[player_id].words.splice(index, 1);
     } else {
-      return null
+      return null;
     }
   }
 
   updatePlayerInput(player_id, input) {
     //Add checks for cheating here by comparing previous input to current input
-    console.log('Updating player input to be ',input)
     if (this.playerStates[player_id].status === PLAYER_STATUS_ALIVE) {
       this.playerStates[player_id].input = input;
-      this.sendGameState(this.generateGameStatePacket())
+      this.sendGameState(this.generateGameStatePacket());
     }
   }
 
@@ -113,6 +116,7 @@ class Game {
 
   startGame() {
     console.log("Game ", this.id, "started!");
+    this.generateInitialLists();
     this.gameStarted = true;
     this.startTimer();
     this.sendGameState(this.generateGameStatePacket());
@@ -128,6 +132,20 @@ class Game {
       playerStates: this.playerStates,
       gameStarted: this.gameStarted
     };
+  }
+
+  generateInitialLists() {
+    let initialWords = [];
+    for (let i = 0; i < INITIAL_WORD_LIST_LENGTH; i++) {
+      let randomLength = randomNumber(
+        this.settings.minWordLength,
+        this.settings.maxWordLength
+      );
+      initialWords.push(generateRandomWord(randomLength));
+    }
+    for (let player_id in this.playerStates) {
+      this.playerStates[player_id].words = [...initialWords];
+    }
   }
 
   generateTimePacket() {
@@ -181,14 +199,21 @@ class Game {
   }
 
   spawnWords() {
-    const maxLength = this.settings.maxWordLength;
+    let randomWordLength = randomNumber(
+      this.settings.minWordLength,
+      this.settings.maxWordLength
+    );
+    while (randomWordLength === 26 || randomWordLength === 30)
+      randomWordLength = randomNumber(
+        this.settings.minWordLength,
+        this.settings.maxWordLength
+      );
 
     for (var player_id in this.playerStates) {
       if (this.playerStates[player_id].status === PLAYER_STATUS_ALIVE) {
-        let word = "asdf";
-      this.addWordToPlayer(player_id, word);
+        let word = generateRandomWord(randomWordLength);
+        this.addWordToPlayer(player_id, word);
       }
-      
     }
     this.sendGameState(this.generateGameStatePacket());
   }
@@ -197,6 +222,10 @@ class Game {
     return {};
   }
 }
+
+const randomNumber = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
 const createGame = (room, sendTimeUpdates, sendGameState, sendPlayerInputs) => {
   let newGame = new Game(

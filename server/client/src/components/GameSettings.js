@@ -42,7 +42,7 @@ class GameSettings extends Component {
         Word Length: Min: {this.props.minWordLength} Max:{" "}
         {this.props.maxWordLength}
         <InputRange
-          maxValue={10}
+          maxValue={31}
           minValue={1}
           value={{
             min: this.props.minWordLength,

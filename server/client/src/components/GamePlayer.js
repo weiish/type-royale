@@ -18,14 +18,39 @@ class GamePlayer extends Component {
       this.handleSend();
     }
   };
+
   renderWordList() {
     if (this.props.gameStarted) {
       return this.props.playerStates[this.props.id].words.map((word, index) => {
-        return <p key={index}>{word}</p>;
+        return this.getHighlightedText(index, word, this.state.input);
       });
     } else {
       return <p>Words list</p>;
     }
+  }
+
+  getHighlightedText(index, text, highlight) {
+    let parts = text.split(new RegExp(`^(${highlight})`, "gi"));
+    return (
+      <p key={index}>
+        {parts.map((part, i) => {
+          if (part.length > 0) {
+            return (
+              <span
+                key={i}
+                style={
+                  part.toLowerCase() === highlight.toLowerCase()
+                    ? { fontWeight: "bold" }
+                    : {}
+                }
+              >
+                {part}
+              </span>
+            );
+          }
+        })}
+      </p>
+    );
   }
 
   renderPlayerHeader() {
@@ -57,12 +82,7 @@ class GamePlayer extends Component {
         />
       );
     } else {
-      return (
-        <input
-          type="text"
-          placeholder="Type words here!"
-        />
-      );
+      return <input type="text" placeholder="Type words here!" />;
     }
   }
 
@@ -70,7 +90,7 @@ class GamePlayer extends Component {
     this.setState({
       input: e.target.value
     });
-    console.log('New input is ',e.target.value)
+    console.log("New input is ", e.target.value);
     this.props.sendPlayerInput(e.target.value);
   }
 
@@ -78,8 +98,8 @@ class GamePlayer extends Component {
     if (this.state.input.length > 0) {
       this.props.sendWord();
       this.setState({
-        input: ''
-      })
+        input: ""
+      });
     }
   }
 
@@ -110,4 +130,7 @@ const mapDispatchToProps = dispatch => {
     sendWord: () => dispatch(sendWord())
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(GamePlayer);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GamePlayer);

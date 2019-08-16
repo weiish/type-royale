@@ -57,7 +57,7 @@ class GameOtherPlayer extends Component {
 
   render() {
     return (
-      <div>
+      <div id={this.props.id}>
         {this.renderPlayerHeader()}
         {this.renderWordList()}
         {this.renderPlayerInput()}
