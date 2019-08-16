@@ -58,6 +58,26 @@ io.on("connection", socket => {
       generateMessage(user.username, message)
     );
   });
+
+  socket.on(Protocol.PLAYER_INPUT, input => {
+    const user = getUser(socket.id);
+    const room = getRoom(user.room_id);
+    const game = getGame(room.game_id);
+    console.log('Got player input!')
+    if (game) {
+      game.updatePlayerInput(user.id, input)
+    }
+  })
+
+  socket.on(Protocol.SEND_WORD, () => {
+    const user = getUser(socket.id);
+    const room = getRoom(user.room_id);
+    const game = getGame(room.game_id);
+    if (game) {
+      game.handlePlayerSendWord(user.id)
+    }
+  })
+
   //Room - Spawn Delay Setting
   socket.on(Protocol.SET_SPAWN_DELAY, value =>
     handleSetSpawnDelay(socket, io, value)

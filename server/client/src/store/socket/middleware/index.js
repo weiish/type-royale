@@ -3,7 +3,10 @@ import { messageReceived, SEND_MESSAGE, systemMessageReceived } from "../../mess
 import * as ErrorProtocol from "../../../constants/ErrorProtocol.js";
 import {
   START_GAME,
-  updateTime
+  updateTime,
+  updateGameState,
+  PLAYER_INPUT,
+  SEND_WORD
 } from "../../game/actions";
 import {
   CREATE_ROOM,
@@ -37,8 +40,12 @@ const socketMiddleware = store => {
     store.dispatch(connectionConfirmed(user_id));
   };
 
-  const onTimeUpdate = ({elapsedTime, timeUntilSpawn}) => {
-    store.dispatch(updateTime(elapsedTime, timeUntilSpawn));
+  const onTimeUpdate = (timePacket) => {
+    store.dispatch(updateTime(timePacket));
+  }
+
+  const onGameState = (gameState) => {
+    store.dispatch(updateGameState(gameState))
   }
 
   const onReceiveError = error => {
@@ -57,7 +64,7 @@ const socketMiddleware = store => {
     }
   };
 
-  const socket = new Socket(onConnected, onMessage, onSystemMessage, onRoomData, onReceiveError, onTimeUpdate);
+  const socket = new Socket(onConnected, onMessage, onSystemMessage, onRoomData, onReceiveError, onTimeUpdate, onGameState);
 
   return next => action => {
     switch (action.type) {
@@ -102,6 +109,12 @@ const socketMiddleware = store => {
         break;
       case START_GAME:
         socket.requestStartGame();
+        break;
+      case PLAYER_INPUT:
+        socket.sendPlayerInput(action.input)
+        break;
+      case SEND_WORD:
+        socket.sendWord();
         break;
       default:
         console.log("Socket middleware will ignore this action ", action.type);

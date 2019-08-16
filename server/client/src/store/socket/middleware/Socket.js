@@ -9,7 +9,8 @@ export default class Socket {
     onSystemMessage,
     onRoomData,
     onReceiveError,
-    onTimeUpdate
+    onTimeUpdate,
+    onGameState
   ) {
     this.onMessage = onMessage;
     this.onRoomData = onRoomData;
@@ -17,6 +18,7 @@ export default class Socket {
     this.onConnected = onConnected;
     this.onReceiveError = onReceiveError;
     this.onTimeUpdate = onTimeUpdate;
+    this.onGameState = onGameState;
     this.socket = null;
     this.port = 4000;
   }
@@ -31,6 +33,7 @@ export default class Socket {
     this.socket.on(Protocol.MESSAGE, this.onMessage);
     this.socket.on(Protocol.SYSTEM_MESSAGE, this.onSystemMessage);
     this.socket.on(Protocol.TIME_UPDATE, this.onTimeUpdate);
+    this.socket.on(Protocol.GAME_STATE, this.onGameState)
   };
 
   requestJoinRoom = (username, room_id) => {
@@ -46,6 +49,8 @@ export default class Socket {
   sendIM = message => this.socket.emit(Protocol.MESSAGE, message);
 
   setUsername = username => this.socket.emit(Protocol.SET_USERNAME, username);
+  sendPlayerInput = input => this.socket.emit(Protocol.PLAYER_INPUT, input)
+  sendWord = () => this.socket.emit(Protocol.SEND_WORD)
 
   requestSetSpawnDelay = value =>
     this.socket.emit(Protocol.SET_SPAWN_DELAY, value);
@@ -58,4 +63,7 @@ export default class Socket {
     this.socket.emit(Protocol.SET_ALLOW_SPECTATORS, value);
 
   requestStartGame = () => this.socket.emit(Protocol.START_GAME);
+
+
+  
 }

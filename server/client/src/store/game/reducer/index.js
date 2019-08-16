@@ -1,6 +1,7 @@
 
 import {
-    TIME_UPDATE
+    TIME_UPDATE,
+    GAME_STATE
 } from '../actions';
 
 
@@ -10,7 +11,9 @@ import {
 // HOST WILL CHECK IF CLIENT IS THE HOST, AND IGNORE REQUEST IF NOT HOST
 const INITIAL_STATE = {
     elapsedTime: 0,
-    timeUntilSpawn: 0
+    timeUntilSpawn: 0,
+    playerStates: {},
+    gameStarted: false
 }
 
 export default function gameReducer(state = INITIAL_STATE, action) {
@@ -19,6 +22,11 @@ export default function gameReducer(state = INITIAL_STATE, action) {
             return Object.assign({}, state, {
                 elapsedTime: action.elapsedTime,
                 timeUntilSpawn: action.timeUntilSpawn
+            })
+        case GAME_STATE:
+            return Object.assign({}, state, {
+                playerStates: action.playerStates,
+                gameStarted: action.gameStarted
             })
         default:
             return state;

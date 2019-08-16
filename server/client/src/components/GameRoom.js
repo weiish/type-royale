@@ -3,10 +3,30 @@ import { connect } from "react-redux";
 import PlayerList from "./PlayerList";
 import GameSettings from "./GameSettings";
 import GameChat from "./GameChat";
+import GameOtherPlayer from "./GameOtherPlayer";
+import GamePlayer from "./GamePlayer";
 
 import { startGame } from "../store/game/actions";
 
 class GameRoom extends Component {
+  renderPlayers() {
+    let content = [];
+    if (this.props.game.gameStarted) {
+      for (let player_id in this.props.game.playerStates) {
+        if (player_id !== this.props.id) {
+          content.push(<GameOtherPlayer id={player_id} />);
+        }
+      }
+    } else {
+      console.log('i condition ',this.props.room.room.playerList.length - 1);
+      for (let i = 0; i < this.props.room.room.playerList.length - 1; i++) {
+        console.log('Pushing another player')
+        content.push(<GameOtherPlayer />)
+      }
+    }
+    return content;
+  }
+
   render() {
     return (
       <div>
@@ -18,9 +38,11 @@ class GameRoom extends Component {
             ? "In Progress"
             : "Waiting for players"}
         </h3>
-        <h3>Time: {this.props.game.elapsedTime/1000}</h3>
-        <h3>Spawn: {this.props.game.timeUntilSpawn/1000}</h3>
+        <h3>Time: {this.props.game.elapsedTime / 1000}</h3>
+        <h3>Spawn: {this.props.game.timeUntilSpawn / 1000}</h3>
         <button onClick={this.props.startGame}>Start Game</button>
+        {this.renderPlayers()}
+        <GamePlayer />
         <GameSettings />
         <PlayerList />
         <GameChat />
@@ -32,7 +54,8 @@ class GameRoom extends Component {
 const mapStateToProps = state => {
   return {
     room: state.room,
-    game: state.game
+    game: state.game,
+    id: state.connection.user_id
   };
 };
 

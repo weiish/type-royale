@@ -14,13 +14,13 @@ class Room {
       allowSpectate: false
     };
     this.gameStarted = false;
-    this.gameID = null;
+    this.game_id = null;
     this.hostID = hostID;
   }
 
   startGame(game_id) {
     if (!this.gameStarted) {
-      this.gameID = game_id;
+      this.game_id = game_id;
       this.gameStarted = true;
     }
       

@@ -13,8 +13,8 @@ const {
 
 const handleStartNewGame = (socket, io, room_id) => {
 
-    const onSendTimeUpdates = (elapsedTime, timeUntilSpawn) => {
-        io.to(room_id).emit(Protocol.TIME_UPDATE, {elapsedTime, timeUntilSpawn})
+    const onSendTimeUpdates = (timePacket) => {
+        io.to(room_id).emit(Protocol.TIME_UPDATE, timePacket)
     }
 
     const onSendGameState = (gameState) => {

@@ -40,12 +40,14 @@ class Game {
     this.id = shortid.generate();
     this.room_id = room.id;
     this.playerStates = {};
+    this.playerList = room.playerList;
     room.playerList.forEach(player => {
       this.playerStates[player.id] = {
         username: player.username,
         words: [],
         status: PLAYER_STATUS_ALIVE,
-        input: ""
+        input: "",
+        order: null
       };
     });
     this.settings = room.settings;
@@ -61,25 +63,51 @@ class Game {
     this.recurseTimer = this.recurseTimer.bind(this);
   }
 
-  addWordToPlayer(player_id, word) {
-    this.playerState[player_id].words.push(word);
+  handlePlayerSendWord(player_id) {
+    if (this.playerStates[player_id].status === PLAYER_STATUS_ALIVE) {
+      const currentInput = this.playerStates[player_id].input.trim().toLowerCase()
+      const removedWord = this.tryRemWordFromPlayer(player_id, currentInput);
+      this.playerStates[player_id].input = ''
+      if (removedWord) {
+        //Generate word of equal length and send to target player
+        const targetList = this.playerList.filter(player => {
+          return player.id !== player_id
+        })
+        const targetPlayerIndex = Math.floor(Math.random() * targetList.length)
+        
+        this.addWordToPlayer(targetList[targetPlayerIndex].id, 'attack');
+      } 
+      this.sendGameState(this.generateGameStatePacket())
+    }
   }
 
-  remWordFromPlayer(player_id, word) {
-    const index = this.playerState[player_id].words.indexOf(word);
+  addWordToPlayer(player_id, word) {
+    this.playerStates[player_id].words.push(word);
+    this.checkPlayerStatus(player_id);
+  }
+
+  tryRemWordFromPlayer(player_id, word) {
+    const index = this.playerStates[player_id].words.indexOf(word);
     if (index > -1) {
-      this.playerState[player_id].words.splice(index, 1);
+      return this.playerStates[player_id].words.splice(index, 1);
+    } else {
+      return null
     }
   }
 
   updatePlayerInput(player_id, input) {
-    this.playerState[player_id].input = input;
+    //Add checks for cheating here by comparing previous input to current input
+    console.log('Updating player input to be ',input)
+    if (this.playerStates[player_id].status === PLAYER_STATUS_ALIVE) {
+      this.playerStates[player_id].input = input;
+      this.sendGameState(this.generateGameStatePacket())
+    }
   }
 
   checkPlayerStatus(player_id) {
-    if (this.playerState[player_id].words.length > MAX_WORD_LIST_LENGTH) {
+    if (this.playerStates[player_id].words.length > MAX_WORD_LIST_LENGTH) {
       //Player Lost
-      this.playerState[player_id].status = PLAYER_STATUS_DEAD;
+      this.playerStates[player_id].status = PLAYER_STATUS_DEAD;
     }
   }
 
@@ -87,15 +115,26 @@ class Game {
     console.log("Game ", this.id, "started!");
     this.gameStarted = true;
     this.startTimer();
-    this.sendGameState(this.generateGameStatePacket())
+    this.sendGameState(this.generateGameStatePacket());
+  }
+
+  shufflePlayers() {
+    //Shuffle player order numbers ()
   }
 
   generateGameStatePacket() {
     return {
       //What should be sent to all players in a game state packet?
       playerStates: this.playerStates,
-      gameStarted: this.gameStarted,
-    }
+      gameStarted: this.gameStarted
+    };
+  }
+
+  generateTimePacket() {
+    return {
+      elapsedTime: this.elapsedTime,
+      timeUntilSpawn: this.timeUntilSpawn
+    };
   }
 
   endGame() {
@@ -111,7 +150,7 @@ class Game {
     //Everytime the second clicks
     // Check if it is time to add a new word to all ALIVE players
     // Update the timer and send an update to all players
-    this.sendTimeUpdates(this.elapsedTime, this.timeUntilSpawn);
+    this.sendTimeUpdates(this.generateTimePacket());
   }
 
   recurseTimer() {
@@ -143,7 +182,15 @@ class Game {
 
   spawnWords() {
     const maxLength = this.settings.maxWordLength;
-    console.log("Spawning words");
+
+    for (var player_id in this.playerStates) {
+      if (this.playerStates[player_id].status === PLAYER_STATUS_ALIVE) {
+        let word = "asdf";
+      this.addWordToPlayer(player_id, word);
+      }
+      
+    }
+    this.sendGameState(this.generateGameStatePacket());
   }
 
   getState() {
