@@ -1,0 +1,67 @@
+.break {
+    flex-basis: 100%;
+    height: 0;
+}
+
+.main-input {
+    margin-top: $xl-size;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: $m-size;
+    flex-grow: 1;
+}
+
+.main-input__input{
+    flex-grow: 1;
+    border-radius: 10px;
+    background: lighten($dark-blue,20%);
+    color: lighten($off-white, 20%);
+    border: none;
+    border-bottom: 0.3rem solid darken($dark-blue, 10%);
+    padding: $s-size;
+}
+
+.main-input__input::placeholder{
+    color: $off-white;
+}
+
+.main-text {
+    color: $off-white;
+    text-align: center;
+    flex-basis: 0;
+    flex-grow: 1;
+}
+
+.main-button-wrapper {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: $m-size;
+    flex-grow: 1;
+}
+
+.main-button {
+    flex-basis: 0;
+    flex-grow: 1;
+    background: $blue;
+    border: none;
+    border-bottom: .6rem solid darken($blue, 10%);
+    color: white;
+    font-weight: bold;
+    font-size: 2rem;
+    margin: 1rem 1rem;
+    padding: 1rem;
+    
+}
+
+.main-button:hover{
+    background: lighten($blue, 10%);
+}
+
+.main-button:disabled {
+    background: gray;
+    border-bottom: .6rem solid darken(gray, 10%);
+}

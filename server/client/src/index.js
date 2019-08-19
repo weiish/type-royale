@@ -7,6 +7,9 @@ import { Provider } from "react-redux";
 import reducers from "./store/socket/reducer";
 import reduxThunk from "redux-thunk";
 import socketMiddleware from "./store/socket/middleware";
+import 'normalize.css/normalize.css';
+import './styles/styles.scss'
+
 
 const store = createStore(reducers, {}, applyMiddleware(socketMiddleware, reduxThunk));
 

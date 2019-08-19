@@ -1,14 +1,7 @@
 
 import {
-    CREATE_ROOM,
-    JOIN_ROOM,
     UPDATE_ROOM,
-    SHOW_JOIN_PAGE,
-    SET_SPAWN_DELAY,
-    SET_MAX_WORD_LENGTH,
-    SET_MIN_WORD_LENGTH,
-    SET_POWER_UPS,
-    SET_ALLOW_SPECTATORS,
+    SHOW_JOIN_PAGE
 } from '../actions';
 
 
@@ -24,8 +17,9 @@ const INITIAL_STATE = {
 export default function roomReducer(state = INITIAL_STATE, action) {
     switch (action.type) {
         case SHOW_JOIN_PAGE:
+            console.log('Setting join page to ',action.value)
             return Object.assign({}, state, {
-                join_page: true
+                join_page: action.value
             }) 
         case UPDATE_ROOM:
             return Object.assign({}, state, {

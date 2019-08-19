@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import {Styles} from '../constants'
 
 class Header extends Component {
   constructor(props) {
@@ -9,11 +8,14 @@ class Header extends Component {
 
   render() {
     return (
-      <nav style={Styles.headerStyle}>
-        <div>
-          <h1>Type Royale</h1>
+      <div className="header">
+        <div className="container">
+          <h1 className="header__title">Type Royale</h1>
+          <h2 className="header__subtitle">
+            Chicken dinners for the fastest typist
+          </h2>
         </div>
-      </nav>
+      </div>
     );
   }
 }

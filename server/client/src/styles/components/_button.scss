@@ -1,0 +1,14 @@
+
+
+.button {
+    background: $blue;
+    border: none;
+    border-bottom: .3rem solid darken($blue, 10%);
+    color: white;
+    font-weight: bold;
+    padding: $s-size
+}
+
+.button:hover{
+    background: lighten($blue, 10%);
+}

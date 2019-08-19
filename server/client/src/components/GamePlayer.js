@@ -13,35 +13,29 @@ class GamePlayer extends Component {
     this.handleSend = this.handleSend.bind(this);
   }
 
-  _handleKeyDown = e => {
-    if (e.key === "Enter") {
-      this.handleSend();
-    }
-  };
-
   renderWordList() {
     if (this.props.gameStarted) {
       return this.props.playerStates[this.props.id].words.map((word, index) => {
         return this.getHighlightedText(index, word, this.state.input);
       });
     } else {
-      return <p>Words list</p>;
+      return <p className="gamePlayer__word">Words list</p>;
     }
   }
 
   getHighlightedText(index, text, highlight) {
     let parts = text.split(new RegExp(`^(${highlight})`, "gi"));
     return (
-      <p key={index}>
+      <p className="gamePlayer__word" key={index}>
         {parts.map((part, i) => {
           if (part.length > 0) {
             return (
               <span
                 key={i}
-                style={
+                className={
                   part.toLowerCase() === highlight.toLowerCase()
-                    ? { fontWeight: "bold" }
-                    : {}
+                    ? "gamePlayer__word__highlighted"
+                    : ""
                 }
               >
                 {part}
@@ -56,46 +50,58 @@ class GamePlayer extends Component {
   renderPlayerHeader() {
     if (this.props.gameStarted) {
       return (
-        <div>
-          <h1>{this.props.playerStates[this.props.id].username}</h1>
-          <h2>{this.props.playerStates[this.props.id].status}</h2>
+        <div className="gamePlayer-header">
+          <h1 className="gamePlayer-header__name">
+            {this.props.playerStates[this.props.id].username + " (YOU)"}
+          </h1>
+          <h2 className="gamePlayer-header__status">
+            {this.props.playerStates[this.props.id].status}
+          </h2>
         </div>
       );
     } else {
       return (
-        <div>
-          <h1>{this.props.username}</h1>
+        <div className="gamePlayer-header">
+          <h1 className="gamePlayer-header__name">
+            {this.props.username + " (YOU)"}
+          </h1>
         </div>
       );
     }
   }
 
   renderPlayerInput() {
-    if (this.props.gameStarted) {
-      return (
-        <input
-          onKeyDown={this._handleKeyDown}
-          onChange={this.handleInput}
-          type="text"
-          placeholder="Type words here!"
-          value={this.state.input}
-        />
-      );
-    } else {
-      return <input type="text" placeholder="Type words here!" />;
-    }
+    return (
+      <div className="gamePlayer-input">
+        <form className="gamePlayer-input__form" onSubmit={this.handleSend}>
+          <input
+            className="gamePlayer-input__input"
+            onChange={this.handleInput}
+            type="text"
+            placeholder="Type words here!"
+            value={this.state.input}
+          />
+          <button className="button">Send Word</button>
+        </form>
+      </div>
+    );
   }
 
   handleInput(e) {
-    this.setState({
-      input: e.target.value
-    });
-    console.log("New input is ", e.target.value);
-    this.props.sendPlayerInput(e.target.value);
+    if (!this.props.gameStarted) {
+      return;
+    }
+    if (!e.target.value.match(/[^a-zA-Z]/)) {
+      this.setState({
+        input: e.target.value
+      });
+      this.props.sendPlayerInput(e.target.value);
+    }
   }
 
-  handleSend() {
-    if (this.state.input.length > 0) {
+  handleSend(e) {
+    e.preventDefault();
+    if (this.state.input.length > 0 && this.props.gameStarted) {
       this.props.sendWord();
       this.setState({
         input: ""
@@ -104,19 +110,27 @@ class GamePlayer extends Component {
   }
 
   render() {
-    return (
-      <div>
-        {this.renderPlayerHeader()}
-        {this.renderWordList()}
-        {this.renderPlayerInput()}
-        <button onClick={this.handleSend}>Send Word</button>
-      </div>
-    );
+    if (this.props.playerList.find(({id}) => id === this.props.id)) {
+      return (
+        <div className="gamePlayer column">
+          {this.renderPlayerHeader()}
+          <div className="gamePlayer__word-list">{this.renderWordList()}</div>
+  
+          {this.renderPlayerInput()}
+        </div>
+      );
+    } else {
+      return (
+        <div></div>
+      )
+    }
+    
   }
 }
 
 const mapStateToProps = state => {
   return {
+    playerList: state.room.room.playerList,
     gameStarted: state.game.gameStarted,
     playerStates: state.game.playerStates,
     id: state.connection.user_id,

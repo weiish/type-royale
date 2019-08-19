@@ -34,9 +34,10 @@ export const joinRoom = (user, room_id) => {
     }
 }
 
-export const showJoinPage = () => {
+export const showJoinPage = (value) => {
     return {
-        type: SHOW_JOIN_PAGE
+        type: SHOW_JOIN_PAGE,
+        value
     }
 }
 

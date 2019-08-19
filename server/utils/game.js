@@ -86,8 +86,8 @@ class Game {
   }
 
   addWordToPlayer(player_id, word) {
-    this.playerStates[player_id].words.push(word);
-    this.checkPlayerStatus(player_id);
+    const isAlive = this.checkPlayerStatus(player_id);
+    if (isAlive) this.playerStates[player_id].words.push(word);
   }
 
   tryRemWordFromPlayer(player_id, word) {
@@ -108,10 +108,12 @@ class Game {
   }
 
   checkPlayerStatus(player_id) {
-    if (this.playerStates[player_id].words.length > MAX_WORD_LIST_LENGTH) {
+    if (this.playerStates[player_id].words.length >= MAX_WORD_LIST_LENGTH) {
       //Player Lost
       this.playerStates[player_id].status = PLAYER_STATUS_DEAD;
+      return false;
     }
+    return true;
   }
 
   startGame() {

@@ -30,7 +30,7 @@ class Main extends Component {
     console.log("Handling Join Room Page... current name is ", this.state.name);
     this.props.connectSocket();
     this.props.setUsername(this.state.name);
-    this.props.showJoinPage();
+    this.props.showJoinPage(true);
   }
 
   validInput(input) {
@@ -39,6 +39,7 @@ class Main extends Component {
     if (input.match(regex) !== null) {
       return false;
     }
+    if(input.length > 15) return false;
     if (input.toLowerCase() === "system") return false;
     return true;
   }
@@ -52,19 +53,27 @@ class Main extends Component {
   renderButtons() {
     if (this.validInput(this.state.name)) {
       return (
-        <div>
-          <button disabled={this.checkConnecting()} onClick={this.handleCreate}>
+        <div className="main-button-wrapper">
+          <button
+            className="main-button"
+            disabled={this.checkConnecting()}
+            onClick={this.handleCreate}
+          >
             {!this.checkConnecting() ? "Create Game" : "Connecting..."}
           </button>
-          <button disabled={this.checkConnecting()} onClick={this.handleJoin}>
+          <button
+            className="main-button"
+            disabled={this.checkConnecting()}
+            onClick={this.handleJoin}
+          >
             Join Game
           </button>
         </div>
       );
     } else {
       return (
-        <div>
-          <p>Please enter a valid username (No special characters or spaces)</p>
+        <div className="main-input">
+          <p className="main-text">No special characters or spaces</p>
         </div>
       );
     }
@@ -72,13 +81,18 @@ class Main extends Component {
 
   render() {
     return (
-      <div className="main">
-        <input
-          onChange={this.handleInput}
-          type="text"
-          placeholder="Enter your name"
-        />
-        {this.renderButtons()}
+      <div className="container">
+        <div className="main-input">
+          <input
+            className="main-input__input"
+            onChange={this.handleInput}
+            type="text"
+            placeholder="Enter your name"
+            maxLength="15"
+          />
+          <div className="break" />
+          {this.renderButtons()}
+        </div>
       </div>
     );
   }
@@ -87,7 +101,7 @@ class Main extends Component {
 const mapDispatchToProps = dispatch => ({
   createRoom: user => dispatch(createRoom(user)),
   connectSocket: user => dispatch(connectSocket(user)),
-  showJoinPage: () => dispatch(showJoinPage()),
+  showJoinPage: (value) => dispatch(showJoinPage(value)),
   setUsername: username => dispatch(setUsername(username))
 });
 

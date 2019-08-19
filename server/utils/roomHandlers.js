@@ -39,14 +39,19 @@ const handleJoinRoom = (socket, io, username, room_id) => {
   } else {
     setUserRoom(socket.id, room_id);
     const user = getUser(socket.id);
-    existingRoom.addPlayer(user);
+    if (existingRoom.isFull()) {
+      existingRoom.addSpectator(user);
+    } else {
+      existingRoom.addPlayer(user);
+    }
+    
     socket.join(existingRoom.id);
     io.to(room_id).emit(Protocol.ROOM_DATA, existingRoom);
     socket.broadcast
       .to(room_id)
       .emit(
-        Protocol.SYSTEM_MESSAGE,
-        generateMessage("System", `${user.username} has joined.`)
+        Protocol.MESSAGE,
+        generateMessage("SYSTEM", `${user.username} has joined.`)
       );
   }
 };

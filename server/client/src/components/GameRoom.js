@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PlayerList from "./PlayerList";
+import SpectatorList from "./SpectatorList";
 import GameSettings from "./GameSettings";
 import GameChat from "./GameChat";
 import GameOtherPlayer from "./GameOtherPlayer";
@@ -14,37 +15,74 @@ class GameRoom extends Component {
     if (this.props.game.gameStarted) {
       for (let player_id in this.props.game.playerStates) {
         if (player_id !== this.props.id) {
-          content.push(<GameOtherPlayer id={player_id} />);
+          content.push(<GameOtherPlayer key={player_id} id={player_id} />);
         }
       }
     } else {
-      for (let i = 0; i < this.props.room.room.playerList.length - 1; i++) {
-        console.log('Pushing another player')
-        content.push(<GameOtherPlayer />)
+      const playerList = this.props.room.room.playerList;
+      for (let i = 0; i < playerList.length; i++) {
+        if (playerList[i].id !== this.props.id) {
+          content.push(
+            <GameOtherPlayer key={playerList[i].id} id={playerList[i].id} />
+          );
+        }
       }
     }
-    return content;
+    return <div className="game-other-player-wrapper">{content}</div>;
+  }
+
+  copyInviteLink = () => {
+    navigator.clipboard.writeText(`${window.location.hostname}/join?id=${this.props.room.room.id}`)
+  }
+
+  renderGameHeader() {
+    return (
+      <div className="game-room__header">
+          <div className="game-room__room-info">
+            <h1 className="game-room__title">Room:</h1>
+            <h1 className="game-room__id">{this.props.room.room.id}</h1>
+            <button className="button game-room__button" onClick={this.copyInviteLink}>
+              Copy Link
+            </button>
+            <button className="button game-room__button" onClick={this.props.startGame}>
+              Start Game
+            </button>
+          </div>
+          <div className="game-room__game-info">
+            <h1 className="game-status__status">
+              Status:{" "}
+              {this.props.room.room.gameStarted
+                ? "In Progress"
+                : "Waiting for players"}
+            </h1>
+            <h1 className="game-status__elapsed-time">
+              Time: {this.props.game.elapsedTime / 1000}
+            </h1>
+            <h1 className="game-status__spawn-time">
+              Spawn: {this.props.game.timeUntilSpawn / 1000}
+            </h1>
+          </div>
+        </div>
+    )
   }
 
   render() {
     return (
-      <div>
-        <h1>Game Room</h1>
-        <h2>Room ID: {this.props.room.room.id}</h2>
-        <h3>
-          Status:{" "}
-          {this.props.room.room.gameStarted
-            ? "In Progress"
-            : "Waiting for players"}
-        </h3>
-        <h3>Time: {this.props.game.elapsedTime / 1000}</h3>
-        <h3>Spawn: {this.props.game.timeUntilSpawn / 1000}</h3>
-        <button onClick={this.props.startGame}>Start Game</button>
-        {this.renderPlayers()}
-        <GamePlayer />
-        <GameSettings />
-        <PlayerList />
-        <GameChat />
+      <div className="game-room__container">
+        {this.renderGameHeader()}
+        <div className="game-container">
+          <div className="column">
+            <div className="game-player-spectator-container">
+              <PlayerList />
+              <SpectatorList />
+            </div>
+
+            <GameSettings />
+            <GameChat />
+          </div>
+          <GamePlayer />
+          <div className="column-3">{this.renderPlayers()}</div>
+        </div>
       </div>
     );
   }

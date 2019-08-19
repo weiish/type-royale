@@ -32,7 +32,6 @@ const socketMiddleware = store => {
   }
 
   const onRoomData = roomData => {
-    console.log("Got room data!");
     store.dispatch(updateRoom(roomData));
   };
 
@@ -75,24 +74,15 @@ const socketMiddleware = store => {
         socket.connect();
         break;
       case CREATE_ROOM:
-        console.log("Middleware handling CREATE room request");
         socket.requestCreateRoom(action.user);
         break;
       case JOIN_ROOM:
-        console.log(
-          "Middleware handling JOIN room request with user=",
-          action.user,
-          "roomid=",
-          action.room_id
-        );
         socket.requestJoinRoom(action.user, action.room_id);
         break;
       case SEND_MESSAGE:
-        console.log('MIddleware handling send message')
         socket.sendIM(action.message)
         break;
       case SET_SPAWN_DELAY:
-        console.log('Attempting to set Spawn Delay to ', action.value)
         socket.requestSetSpawnDelay(action.value);
         break;
       case SET_MAX_WORD_LENGTH:
@@ -117,7 +107,7 @@ const socketMiddleware = store => {
         socket.sendWord();
         break;
       default:
-        console.log("Socket middleware will ignore this action ", action.type);
+        
         break;
     }
     return next(action);

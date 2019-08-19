@@ -23,9 +23,10 @@ class GameSettings extends Component {
 
   renderSpawnDelay() {
     return (
-      <li>
+      <li className="game-settings__spawn-delay">
         Spawn Delay: {this.props.spawnDelay}
         <InputRange
+          className="game-settings__spawn-delay-input"
           maxValue={10}
           minValue={1}
           value={this.props.spawnDelay}
@@ -38,10 +39,11 @@ class GameSettings extends Component {
 
   renderWordLength() {
     return (
-      <li>
+      <li className="game-settings__word-length">
         Word Length: Min: {this.props.minWordLength} Max:{" "}
         {this.props.maxWordLength}
         <InputRange
+          className="game-settings__word-length-input"
           maxValue={31}
           minValue={1}
           value={{
@@ -63,14 +65,16 @@ class GameSettings extends Component {
     if (this.isHost() && !this.props.gameStarted) {
       checkBox = (
         <input
-          onClick={() => this.props.setPowerUps(!this.props.powerUps)}
+          className="game-settings__power-up-input"
+          onChange={() => this.props.setPowerUps(!this.props.powerUps)}
           type="checkbox"
           value="Power Ups"
+          checked={this.props.powerUps}
         />
       );
     }
     return (
-      <li>
+      <li className="game-settings__power-up">
         Power Ups: {this.props.powerUps ? "On" : "Off"}
         {checkBox}
       </li>
@@ -82,17 +86,19 @@ class GameSettings extends Component {
     if (this.isHost() && !this.props.gameStarted) {
       checkBox = (
         <input
-          onClick={() =>
+          className="game-settings__spectator-input"
+          onChange={() =>
             this.props.setAllowSpectators(!this.props.allowSpectate)
           }
           type="checkbox"
           value="Power Ups"
           visibility={this.isHost() ? "visible" : "hidden"}
+          checked={this.props.allowSpectate}
         />
       );
     }
     return (
-      <li>
+      <li className="game-settings__spectator">
         Allow Spectators: {this.props.allowSpectate ? "On" : "Off"}
         {checkBox}
       </li>
@@ -101,9 +107,9 @@ class GameSettings extends Component {
 
   render() {
     return (
-      <div>
-        <h1>Settings</h1>
-        <ul>
+      <div className="game-settings">
+        <h1 className="game-settings__header">Settings</h1>
+        <ul className="game-settings__ul">
           {this.renderSpawnDelay()}
           {this.renderWordLength()}
           {this.renderPowerUps()}

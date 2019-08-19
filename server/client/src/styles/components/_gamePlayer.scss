@@ -1,0 +1,73 @@
+//Header
+.gamePlayer {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    background: $light-blue;
+    margin: 2rem 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 8px #ffffff;
+    align-items: stretch;
+}
+
+.gamePlayer__word-list {
+    flex-wrap: wrap;
+}
+
+.gamePlayer__word {
+    color: darken($green, 10%);
+    margin: 0;
+    padding: 0.2rem $s-size;
+    font-size: 1.4rem;
+    border-bottom: 1px solid lighten($light-blue, 10%);
+}
+
+.gamePlayer__word__highlighted{
+    font-weight: bold;
+    color: lighten($green, 20%)
+}
+
+.gamePlayer-input {
+    display: flex;
+    margin-top: auto;
+}
+
+.gamePlayer-input__form {
+    display: flex; //Take same height
+    padding: $s-size;
+    flex: 1;
+}
+
+.gamePlayer-input__input{
+    background: $dark-blue;
+    color: lighten($off-white, 20%);
+    border: none;
+    border-bottom: 0.3rem solid darken($dark-blue, 10%);
+    flex: 1 1 auto;
+    margin-right: $s-size;
+    padding: $s-size;
+    box-shadow: 0px 0px 10px #ffffff;
+}
+.gamePlayer-input__input::placeholder{
+    color: $off-white;
+}
+
+.gamePlayer-header {
+    background: $back-blue;
+    color: $gold;
+    display: flex;
+    justify-content: space-between; //Distribute remaining space between
+    padding: 1rem 2rem;
+    margin:0;
+    border-radius: 1rem;
+}
+
+.gamePlayer-header__name {
+    font-size: $m-size;
+    margin: 0;
+}
+
+.gamePlayer-header__status {
+    font-size: $m-size;
+    margin: 0;
+}

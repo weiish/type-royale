@@ -1,0 +1,134 @@
+
+.game-room__container {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    max-height: 80%;
+    min-height: 80%;
+}
+
+.game-room__header {
+    display: flex;
+    flex: 0.05 0.05 auto;
+    justify-content: flex-start;
+    text-align: center;
+    align-items: center;
+    background: $light-blue;
+    margin: 0;
+}
+
+.game-container {
+    display: flex;
+    flex: 1 1 auto;
+    margin: 0;    
+    max-height: 80%;
+    min-height: 80%;
+}
+
+.game-room__room-info {
+    justify-content: space-between;
+    margin: 0;
+    display: flex;
+    flex-grow: 0.25;
+    max-width: 35rem;
+}
+
+.game-room__button {
+    max-width: 10rem;
+    min-width: 10rem;
+}
+
+.game-room__title {
+    flex-grow: 0.25;
+    font-size: $m-size;
+    color: $off-black;
+    vertical-align: middle;
+    color: $green;
+}
+
+.game-room__id {
+    flex-grow: 0.25;
+    font-size: $m-size;
+    color: $off-black;
+    vertical-align: middle;
+    color: $green;
+}
+
+
+.game-room__game-info {
+    display: flex;
+    justify-content: flex-start;
+    text-align: center;
+    background: $light-blue;
+    margin: 0;
+}
+
+
+.game-status__status {
+    margin-left: 2rem;
+    flex: 1 1 auto;
+    color: gold;
+    font-size: $m-size;
+    min-width: 20rem;
+    max-width: 20rem;
+}
+
+.game-status__elapsed-time {
+    margin-left: 2rem;
+    flex: 1 1 auto;
+    color:gold;
+    font-size: $m-size;
+    min-width: 15rem;
+    max-width: 15rem;
+}
+
+.game-status__spawn-time {
+    margin-left: 2rem;
+    flex: 1 1 auto;
+    color:gold;
+    font-size: $m-size;
+    min-width: 15rem;
+    max-width: 15rem;
+}
+
+
+.game-other-player-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 100%;
+}
+
+.game-player-spectator-container{
+    background: $off-black;
+    flex: 1 1;
+    display: flex;
+    flex-direction: row;
+    max-height:29%;
+    min-height:29%;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 1 1;
+    width: 100%;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    max-width: 350px;
+    min-width: 350px;
+    max-height: 20%;
+}
+
+.column-3 {
+    display:flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex:2;
+}

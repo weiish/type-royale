@@ -1,17 +1,18 @@
 const shortid = require("shortid");
-
+const MAX_PLAYERS = 7;
 var rooms = [];
 
 class Room {
   constructor(hostID) {
     this.id = shortid.generate(); //Room name
     this.playerList = []; //List of player objects which contain the socket id and username
+    this.spectatorList = [];
     this.settings = {
       spawnDelay: 5,
       maxWordLength: 10,
       minWordLength: 2,
       powerUps: false,
-      allowSpectate: false
+      allowSpectate: true
     };
     this.gameStarted = false;
     this.game_id = null;
@@ -23,12 +24,15 @@ class Room {
       this.game_id = game_id;
       this.gameStarted = true;
     }
-      
+  }
+
+  isFull() {
+    return (this.playerList.length >= MAX_PLAYERS)
   }
 
   onGameOver() {
-      this.gameStarted = false;
-      //When game tells room that the game is over, the room should....
+    this.gameStarted = false;
+    //When game tells room that the game is over, the room should....
   }
 
   addPlayer(playerObject) {
@@ -37,6 +41,16 @@ class Room {
 
   remPlayer(playerID) {
     this.playerList = this.playerList.filter(player => {
+      return player.id !== playerID;
+    });
+  }
+
+  addSpectator(playerObject) {
+    this.spectatorList.push(playerObject);
+  }
+
+  remSpectator(playerID) {
+    this.spectatorList = this.spectatorList.filter(player => {
       return player.id !== playerID;
     });
   }

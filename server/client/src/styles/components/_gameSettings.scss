@@ -1,0 +1,32 @@
+.game-settings {
+    flex: 1 1 auto;
+    max-height: 21%;
+    min-height: 21%;
+}
+
+.game-settings__header {
+    margin: 0;
+    font-size: $m-size;
+    padding: 1rem;
+    border-bottom: 0.1rem solid lighten($light-blue, 10%);
+}
+
+.game-settings__ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0.5rem;
+}
+
+.game-settings__spawn-delay {
+    padding: 0.2rem 0;
+}
+
+.game-settings__word-length {
+    padding: 0.2rem 0;
+}
+.game-settings__power-up {
+    padding: 0.2rem 0;
+}
+.game-settings__spectator {
+    padding: 0.2rem 0;
+}

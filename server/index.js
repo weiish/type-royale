@@ -39,15 +39,23 @@ io.on("connection", socket => {
   socket.on(Protocol.START_GAME, () => {
     const user = getUser(socket.id);
     const room = getRoom(user.room_id);
-    if (userIsHost(user, room)) {
-      const {newGame, updatedRoom} = handleStartNewGame(socket, io, room.id);
-      io.to(room.id).emit(Protocol.ROOM_DATA, room);
-    } else {
-      socket.emit(Protocol.ENCOUNTERED_ERROR, {
+    if (!userIsHost(user, room)) {
+      return socket.emit(Protocol.ENCOUNTERED_ERROR, {
         type: ErrorProtocol.ERR_PERMISSIONS,
         error: "Only Host may start the game"
       });
+      
     }
+
+    if (room.playerList.length < 2) {
+      return socket.emit(Protocol.ENCOUNTERED_ERROR, {
+        type: ErrorProtocol.ERR_PERMISSIONS, 
+        error: "Not enough players to start the game"
+      })
+    }
+
+    const {newGame, updatedRoom} = handleStartNewGame(socket, io, room.id);
+    io.to(room.id).emit(Protocol.ROOM_DATA, updatedRoom);
   });
 
   socket.on(Protocol.MESSAGE, message => {
@@ -118,8 +126,8 @@ io.on("connection", socket => {
       socket.broadcast
         .to(room.id)
         .emit(
-          Protocol.SYSTEM_MESSAGE,
-          generateMessage("System", `${user.username} has left.`)
+          Protocol.MESSAGE,
+          generateMessage("SYSTEM", `${user.username} has left.`)
         );
       socket.leave(room.id);
       room.remPlayer(socket.id);

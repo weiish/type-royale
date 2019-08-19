@@ -1,16 +1,16 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-class PlayerList extends React.Component {
+class SpectatorList extends React.Component {
 
     renderList() {
-        if (!this.props.playerList) return <p>Empty</p>
-        const playerList = this.props.playerList.map(player => {
+        if (!this.props.spectatorList) return <p>Empty</p>
+        const spectatorList = this.props.spectatorList.map(player => {
             return <li className="player-list__li" key={player.id}>{player.username}</li>
         })
         return (
             <ul className='player-list__ul'>
-                {playerList}
+                {spectatorList}
             </ul>
         )
     }
@@ -18,16 +18,15 @@ class PlayerList extends React.Component {
     render() {
         return (
             <div className="player-list">
-                <h2 className="player-list__header">Players</h2>
+                <h2 className="player-list__header">Spectators</h2>
                 {this.renderList()}
             </div>
         )
-
     }
 }
 
 const mapStateToProps = (state) => {
-    return {playerList: state.room.room.playerList}
+    return {spectatorList: state.room.room.spectatorList}
 }
 
-export default connect(mapStateToProps)(PlayerList);
+export default connect(mapStateToProps)(SpectatorList);

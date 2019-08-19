@@ -1,0 +1,35 @@
+//Reset so that all browsers will start at the same point in terms of style
+
+html {
+    font-size: 62.5%; //Rems are base ten
+    height: 100%;
+}
+
+body {
+    font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif;
+    color: white;
+    font-size: $m-size;
+    background: $dark-blue;
+    height: 100%;
+}
+
+#root {
+    height: 100vh;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: default;
+}
+
+.App {
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    min-height: 100vh;
+    max-width: 100vw;
+    min-width: 100vw;
+}

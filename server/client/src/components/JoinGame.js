@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { joinRoom } from "../store/room/actions";
+import { joinRoom, showJoinPage } from "../store/room/actions";
 import { connectSocket } from "../store/socket/actions";
 
 class JoinGame extends Component {
@@ -24,6 +24,7 @@ class JoinGame extends Component {
     if (this.state.code.length > 0)  this.props.joinRoom(this.props.user, this.state.code);
   }
 
+
   renderError() {
     if (this.props.error !== null) {
       return <p>Invalid room id!</p>;
@@ -42,6 +43,7 @@ class JoinGame extends Component {
         />
         <button onClick={this.handleJoin}>Join</button>
         {this.renderError()}
+        <button onClick={() => this.props.showJoinPage(false)}>Cancel</button>
       </div>
     );
   }
@@ -56,7 +58,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   joinRoom: (user, room_id) => dispatch(joinRoom(user, room_id)),
-  connectSocket: user => dispatch(connectSocket(user))
+  connectSocket: user => dispatch(connectSocket(user)),
+  showJoinPage: (value) => dispatch(showJoinPage(value))
 });
 
 export default connect(

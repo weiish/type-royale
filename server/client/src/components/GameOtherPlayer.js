@@ -10,25 +10,33 @@ class GameOtherPlayer extends Component {
   renderWordList() {
     if (this.props.gameStarted) {
       return this.props.playerStates[this.props.id].words.map((word, index) => {
-        return <p key={index}>{word}</p>;
+        return (
+          <p className="gameOtherPlayer__word" key={index}>
+            {word}
+          </p>
+        );
       });
     } else {
-      return <p>Other player word list</p>;
+      return <p className="gameOtherPlayer__word">Other player word list</p>;
     }
   }
 
   renderPlayerHeader() {
     if (this.props.gameStarted) {
       return (
-        <div>
-          <h1>{this.props.playerStates[this.props.id].username}</h1>
-          <h2>{this.props.playerStates[this.props.id].status}</h2>
+        <div className="gameOtherPlayer-header">
+          <h1 className="gameOtherPlayer-header__name">
+            {this.props.playerStates[this.props.id].username}
+          </h1>
+          <h2 className="gameOtherPlayer-header__status">
+            {this.props.playerStates[this.props.id].status}
+          </h2>
         </div>
       );
     } else {
       return (
-        <div>
-          <h1>Other Player</h1>
+        <div className="gameOtherPlayer-header">
+          <h1 className="gameOtherPlayer-header__name">Other Player</h1>
         </div>
       );
     }
@@ -37,29 +45,38 @@ class GameOtherPlayer extends Component {
   renderPlayerInput() {
     if (this.props.gameStarted) {
       return (
-        <input
-          type="text"
-          placeholder="Type words here!"
-          value={this.props.playerStates[this.props.id].input}
-          disabled={true}
-        />
+        <form className="gameOtherPlayer-input">
+          <input
+            className="gameOtherPlayer-input__input"
+            type="text"
+            placeholder="Other Player Input..."
+            value={this.props.playerStates[this.props.id].input}
+            disabled={true}
+          />
+        </form>
       );
     } else {
       return (
-        <input
-          type="text"
-          placeholder="Type words here!"
-          disabled={true}
-        />
+        <form className="gameOtherPlayer-input">
+          <input
+            className="gameOtherPlayer-input__input"
+            type="text"
+            placeholder="Other Player Input..."
+            disabled={true}
+          />
+        </form>
       );
     }
   }
 
   render() {
     return (
-      <div id={this.props.id}>
+      <div className="gameOtherPlayer" key={this.props.key}>
         {this.renderPlayerHeader()}
-        {this.renderWordList()}
+        <div className="gameOtherPlayer__word-list">
+          {this.renderWordList()}
+        </div>
+
         {this.renderPlayerInput()}
       </div>
     );
