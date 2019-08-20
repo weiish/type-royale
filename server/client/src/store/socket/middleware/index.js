@@ -84,7 +84,7 @@ const socketMiddleware = store => {
         socket.setUsername(action.username);
         break;
       case CONNECT_SOCKET:
-        socket.connect(action.url);
+        socket.connect();
         break;
       case CREATE_ROOM:
         socket.requestCreateRoom(action.user);

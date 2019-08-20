@@ -24,7 +24,7 @@ export default class Socket {
 
   connect = (url) => {
     const host = url;
-    this.socket = io.connect(host || 'http://localhost:4000');
+    this.socket = io.connect(process.env.IO_URL || 'http://localhost:4000');
 
     this.socket.on(Protocol.ROOM_DATA, this.onRoomData);
     this.socket.on(Protocol.ENCOUNTERED_ERROR, this.onReceiveError);
