@@ -20,11 +20,10 @@ export default class Socket {
     this.onTimeUpdate = onTimeUpdate;
     this.onGameState = onGameState;
     this.socket = null;
-    this.port = 4000;
   }
 
   connect = () => {
-    const host = `http://localhost:${this.port}`;
+    const host = process.env.IO_URL;
     this.socket = io.connect(host);
 
     this.socket.on(Protocol.ROOM_DATA, this.onRoomData);
