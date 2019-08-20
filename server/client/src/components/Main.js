@@ -27,6 +27,8 @@ class Main extends Component {
     this.handleShowCreateGame = this.handleShowCreateGame.bind(this);
     this.handleGoBack = this.handleGoBack.bind(this);
     this.usernameError = this.usernameError.bind(this);
+    console.log('Main constructor', process.env)
+    console.log(process.env.IO_URL)
   }
 
   handleCreate() {
