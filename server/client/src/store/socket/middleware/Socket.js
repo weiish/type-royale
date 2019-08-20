@@ -22,9 +22,11 @@ export default class Socket {
     this.socket = null;
   }
 
-  connect = (url) => {
-    const host = url;
-    this.socket = io.connect(process.env.IO_URL || 'http://localhost:4000');
+  connect = () => {
+    console.log(process.env.IO_URL)
+    const host = process.env.IO_URL || 'http://localhost:4000';
+    console.log(host)
+    this.socket = io.connect(host);
 
     this.socket.on(Protocol.ROOM_DATA, this.onRoomData);
     this.socket.on(Protocol.ENCOUNTERED_ERROR, this.onReceiveError);

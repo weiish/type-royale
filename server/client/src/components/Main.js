@@ -234,7 +234,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   createRoom: user => dispatch(createRoom(user)),
-  connectSocket: user => dispatch(connectSocket(user)),
+  connectSocket: () => dispatch(connectSocket()),
   joinRoom: (user, room_id) => dispatch(joinRoom(user, room_id)),
   setUsername: username => dispatch(setUsername(username)),
   errorHandled: (errorType) => dispatch(errorHandled(errorType))
