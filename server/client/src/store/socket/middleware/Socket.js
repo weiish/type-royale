@@ -23,8 +23,8 @@ export default class Socket {
   }
 
   connect = () => {
-    console.log(process.env.IO_URL)
-    const host = process.env.IO_URL || 'http://localhost:4000';
+    console.log(process.env.REACT_APP_IO_URL)
+    const host = process.env.REACT_APP_IO_URL || 'http://localhost:4000';
     console.log(host)
     this.socket = io.connect(host);
 
