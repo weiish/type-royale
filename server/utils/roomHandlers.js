@@ -25,10 +25,7 @@ const handleCreateRoom = socket => {
   socket.emit(Protocol.ROOM_DATA, newRoom);
 };
 
-const handleJoinRoom = (socket, io, username, room_id) => {
-  console.log(
-    `Server got Join Room Request, username=${username} room_id=${room_id}`
-  );
+const handleJoinRoom = (socket, io, room_id) => {
   let existingRoom = getRoom(room_id);
   if (!existingRoom) {
     console.log("Invalid room ID, sending error back");
@@ -193,6 +190,32 @@ const handleSetAllowSpectators = (socket, io, value) => {
   }
 };
 
+const handleSwitchToPlayer = (socket, io, id) => {
+  const moveUser = getUser(id);
+  const requestUser = getUser(socket.id);
+  const room = getRoom(moveUser.room_id);
+  if (userIsHost(requestUser, room) || socket.id === id) { //If requester is host, or the user requested to change themselves
+    const removedSpectator = room.remSpectator(id);
+    if (removedSpectator) {
+      room.addPlayer(removedSpectator)
+      io.to(room.id).emit(Protocol.ROOM_DATA, room);
+    }
+  }
+}
+
+const handleSwitchToSpectator = (socket, io, id) => {
+  const moveUser = getUser(id);
+  const requestUser = getUser(socket.id);
+  const room = getRoom(moveUser.room_id);
+  if (userIsHost(requestUser, room) || socket.id === id) { //If requester is host, or the user requested to change themselves
+    const removedPlayer = room.remPlayer(id);
+    if (removedPlayer) {
+      room.addSpectator(removedPlayer)
+      io.to(room.id).emit(Protocol.ROOM_DATA, room);
+    }
+  }
+}
+
 module.exports = {
   handleCreateRoom,
   handleJoinRoom,
@@ -200,5 +223,7 @@ module.exports = {
   handleSetMaxWordLength,
   handleSetMinWordLength,
   handleSetPowerUps,
-  handleSetAllowSpectators
+  handleSetAllowSpectators,
+  handleSwitchToPlayer,
+  handleSwitchToSpectator
 };

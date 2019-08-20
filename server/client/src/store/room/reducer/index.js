@@ -1,7 +1,6 @@
 
 import {
-    UPDATE_ROOM,
-    SHOW_JOIN_PAGE
+    UPDATE_ROOM
 } from '../actions';
 
 
@@ -16,11 +15,6 @@ const INITIAL_STATE = {
 
 export default function roomReducer(state = INITIAL_STATE, action) {
     switch (action.type) {
-        case SHOW_JOIN_PAGE:
-            console.log('Setting join page to ',action.value)
-            return Object.assign({}, state, {
-                join_page: action.value
-            }) 
         case UPDATE_ROOM:
             return Object.assign({}, state, {
                 room: action.roomData

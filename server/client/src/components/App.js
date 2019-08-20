@@ -2,20 +2,13 @@ import React from 'react';
 import {connect} from 'react-redux'
 import Main from './Main'
 import GameRoom from './GameRoom'
-import JoinGame from './JoinGame'
 import Header from './Header'
 
 class App extends React.Component {
 
-  constructor() {
-    super();
-  }
-
   renderLogic() {
     if (this.props.room.room !== null) {
       return <GameRoom />
-    } else if (this.props.room.join_page) {
-      return <JoinGame />
     } else {
       return <Main />
     }

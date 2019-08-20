@@ -3,18 +3,31 @@
     height: 0;
 }
 
+.main-error {
+    color: red;
+    flex: 1 1 100%;
+    margin: auto;
+    text-align: center;
+}
+
 .main-input {
+    margin: auto;
     margin-top: $xl-size;
     display:flex;
     flex-direction: row;
+    flex: 1 1 auto;
     justify-content: space-between;
     flex-wrap: wrap;
     padding: $m-size;
-    flex-grow: 1;
+    max-width: 60%;
+    min-width: 60%;
 }
 
 .main-input__input{
-    flex-grow: 1;
+    flex: 1 1 100%;
+    max-width: 20rem;
+    margin: auto;
+    margin-bottom: 2rem;
     border-radius: 10px;
     background: lighten($dark-blue,20%);
     color: lighten($off-white, 20%);
@@ -30,7 +43,7 @@
 .main-text {
     color: $off-white;
     text-align: center;
-    flex-basis: 0;
+    flex-basis: 100%;
     flex-grow: 1;
 }
 
@@ -44,8 +57,8 @@
 }
 
 .main-button {
-    flex-basis: 0;
-    flex-grow: 1;
+    flex: 1 1 auto;
+    margin: auto;
     background: $blue;
     border: none;
     border-bottom: .6rem solid darken($blue, 10%);
@@ -54,7 +67,7 @@
     font-size: 2rem;
     margin: 1rem 1rem;
     padding: 1rem;
-    
+    min-width: 15rem;
 }
 
 .main-button:hover{

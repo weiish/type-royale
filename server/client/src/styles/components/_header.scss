@@ -10,9 +10,19 @@
 }
 
 .header__title {
+    font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif;
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    color: white;
     font-size: $l-size;
     margin: 0;
 }
+
+.header__title:hover {
+    color: $blue;
+}
+
 
 .header__subtitle {
     color: $off-white;

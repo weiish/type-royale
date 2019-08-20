@@ -16,6 +16,8 @@ const SET_MAX_WORD_LENGTH = "set_max_word_length";
 const SET_MIN_WORD_LENGTH = "set_min_word_length";
 const SET_POWER_UPS = "set_power_ups";
 const SET_ALLOW_SPECTATORS = "set_allow_spectators";
+ const SWITCH_TO_PLAYER = 'switch_to_player'
+ const SWITCH_TO_SPECTATOR = 'switch_to_spectator'
 
 //Game
 const TIME_UPDATE = "time_update";
@@ -39,6 +41,8 @@ module.exports = {
   SET_MIN_WORD_LENGTH,
   SET_POWER_UPS,
   SET_ALLOW_SPECTATORS,
+  SWITCH_TO_PLAYER,
+  SWITCH_TO_SPECTATOR,
   TIME_UPDATE,
   GAME_STATE,
   PLAYER_INPUT,

@@ -36,9 +36,9 @@ export default class Socket {
     this.socket.on(Protocol.GAME_STATE, this.onGameState)
   };
 
-  requestJoinRoom = (username, room_id) => {
+  requestJoinRoom = (room_id) => {
     console.log("Client socket is requesting to join a room... ");
-    this.socket.emit(Protocol.JOIN_ROOM, username, room_id);
+    this.socket.emit(Protocol.JOIN_ROOM, room_id);
   };
 
   requestCreateRoom = username => {
@@ -63,6 +63,8 @@ export default class Socket {
     this.socket.emit(Protocol.SET_ALLOW_SPECTATORS, value);
 
   requestStartGame = () => this.socket.emit(Protocol.START_GAME);
+  requestSwitchToPlayer = (id) => this.socket.emit(Protocol.SWITCH_TO_PLAYER, id)
+  requestSwitchToSpectator = (id) => this.socket.emit(Protocol.SWITCH_TO_SPECTATOR, id)
 
 
   

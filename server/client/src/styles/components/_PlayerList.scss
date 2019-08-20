@@ -12,6 +12,15 @@
     border-bottom: 0.1rem solid $light-blue;
 }
 
+.player-list__header-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.player-list__button {
+    
+}
+
 .player-list__ul{
     list-style-type: none;
     margin: 0;

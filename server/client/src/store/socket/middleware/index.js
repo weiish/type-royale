@@ -1,5 +1,9 @@
 import Socket from "./Socket";
-import { messageReceived, SEND_MESSAGE, systemMessageReceived } from "../../message/actions";
+import {
+  messageReceived,
+  SEND_MESSAGE,
+  systemMessageReceived
+} from "../../message/actions";
 import * as ErrorProtocol from "../../../constants/ErrorProtocol.js";
 import {
   START_GAME,
@@ -16,7 +20,9 @@ import {
   SET_MAX_WORD_LENGTH,
   SET_MIN_WORD_LENGTH,
   SET_POWER_UPS,
-  SET_ALLOW_SPECTATORS
+  SET_ALLOW_SPECTATORS,
+  SWITCH_TO_PLAYER,
+  SWITCH_TO_SPECTATOR
 } from "../../room/actions";
 import { CONNECT_SOCKET, connectionConfirmed, SET_USERNAME } from "../actions";
 import { joinRoomError, changeSettingError } from "../../errors/actions";
@@ -29,7 +35,7 @@ const socketMiddleware = store => {
 
   const onSystemMessage = message => {
     store.dispatch(systemMessageReceived(message));
-  }
+  };
 
   const onRoomData = roomData => {
     store.dispatch(updateRoom(roomData));
@@ -39,20 +45,19 @@ const socketMiddleware = store => {
     store.dispatch(connectionConfirmed(user_id));
   };
 
-  const onTimeUpdate = (timePacket) => {
+  const onTimeUpdate = timePacket => {
     store.dispatch(updateTime(timePacket));
-  }
+  };
 
-  const onGameState = (gameState) => {
-    store.dispatch(updateGameState(gameState))
-  }
+  const onGameState = gameState => {
+    store.dispatch(updateGameState(gameState));
+  };
 
   const onReceiveError = error => {
     //Parse the error to see what kind of error it is, and dispatch accordingly
     console.log("Got an error");
     switch (error.type) {
       case ErrorProtocol.ERR_JOIN_ROOM:
-        console.log("Got join room error");
         store.dispatch(joinRoomError(error.error));
         break;
       case ErrorProtocol.ERR_CHANGE_SETTING:
@@ -63,7 +68,15 @@ const socketMiddleware = store => {
     }
   };
 
-  const socket = new Socket(onConnected, onMessage, onSystemMessage, onRoomData, onReceiveError, onTimeUpdate, onGameState);
+  const socket = new Socket(
+    onConnected,
+    onMessage,
+    onSystemMessage,
+    onRoomData,
+    onReceiveError,
+    onTimeUpdate,
+    onGameState
+  );
 
   return next => action => {
     switch (action.type) {
@@ -77,10 +90,10 @@ const socketMiddleware = store => {
         socket.requestCreateRoom(action.user);
         break;
       case JOIN_ROOM:
-        socket.requestJoinRoom(action.user, action.room_id);
+        socket.requestJoinRoom(action.room_id);
         break;
       case SEND_MESSAGE:
-        socket.sendIM(action.message)
+        socket.sendIM(action.message);
         break;
       case SET_SPAWN_DELAY:
         socket.requestSetSpawnDelay(action.value);
@@ -97,17 +110,22 @@ const socketMiddleware = store => {
       case SET_ALLOW_SPECTATORS:
         socket.requestSetAllowSpectate(action.value);
         break;
+      case SWITCH_TO_PLAYER:
+        socket.requestSwitchToPlayer(action.id);
+        break;
+      case SWITCH_TO_SPECTATOR:
+        socket.requestSwitchToSpectator(action.id);
+        break;
       case START_GAME:
         socket.requestStartGame();
         break;
       case PLAYER_INPUT:
-        socket.sendPlayerInput(action.input)
+        socket.sendPlayerInput(action.input);
         break;
       case SEND_WORD:
         socket.sendWord();
         break;
       default:
-        
         break;
     }
     return next(action);

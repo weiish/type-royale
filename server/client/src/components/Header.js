@@ -10,7 +10,7 @@ class Header extends Component {
     return (
       <div className="header">
         <div className="container">
-          <h1 className="header__title">Type Royale</h1>
+          <button className="header__title" onClick={() => window.location.reload()}>Type Royale</button>
           <h2 className="header__subtitle">
             Chicken dinners for the fastest typist
           </h2>

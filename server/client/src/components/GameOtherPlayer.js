@@ -28,6 +28,9 @@ class GameOtherPlayer extends Component {
           <h1 className="gameOtherPlayer-header__name">
             {this.props.playerStates[this.props.id].username}
           </h1>
+          <h1 className="gameOtherPlayer-header__word_count">
+            {this.props.playerStates[this.props.id].words.length}/30
+          </h1>
           <h2 className="gameOtherPlayer-header__status">
             {this.props.playerStates[this.props.id].status}
           </h2>
@@ -36,7 +39,7 @@ class GameOtherPlayer extends Component {
     } else {
       return (
         <div className="gameOtherPlayer-header">
-          <h1 className="gameOtherPlayer-header__name">Other Player</h1>
+          <h1 className="gameOtherPlayer-header__name">{this.props.playerList.find(({id}) => id===this.props.id).username}</h1>
         </div>
       );
     }
@@ -85,6 +88,7 @@ class GameOtherPlayer extends Component {
 
 const mapStateToProps = state => {
   return {
+    playerList: state.room.room.playerList,
     playerStates: state.game.playerStates,
     gameStarted: state.game.gameStarted
   };

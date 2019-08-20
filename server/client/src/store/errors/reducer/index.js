@@ -20,6 +20,10 @@ export default function errorReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         permissions: action.error
       });
+    case Errors.ERR_HANDLED:
+      return Object.assign({}, state, {
+        [action.errorType]: null
+      })
     default:
       return state;
   }

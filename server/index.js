@@ -1,5 +1,15 @@
 const express = require("express");
 const app = express();
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'))
+
+  const path = require('path')
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+  })
+}
+
 const server = require("http").Server(app);
 const {
   addUser,
@@ -14,7 +24,7 @@ const io = require("socket.io").listen(server);
 const Protocol = require("./constants/Protocol.js");
 const ErrorProtocol = require("./constants/ErrorProtocol.js");
 const { Room, createRoom, deleteRoom, getRoom } = require("./utils/room");
-const { Game, createGame, deleteGame, getGame } = require('./utils/game')
+const { Game, createGame, deleteGame, getGame } = require("./utils/game");
 const {
   handleCreateRoom,
   handleJoinRoom,
@@ -22,7 +32,9 @@ const {
   handleSetMaxWordLength,
   handleSetMinWordLength,
   handleSetPowerUps,
-  handleSetAllowSpectators
+  handleSetAllowSpectators,
+  handleSwitchToPlayer,
+  handleSwitchToSpectator
 } = require("./utils/roomHandlers");
 
 const { handleStartNewGame } = require("./utils/gameHandlers");
@@ -44,17 +56,16 @@ io.on("connection", socket => {
         type: ErrorProtocol.ERR_PERMISSIONS,
         error: "Only Host may start the game"
       });
-      
     }
 
     if (room.playerList.length < 2) {
       return socket.emit(Protocol.ENCOUNTERED_ERROR, {
-        type: ErrorProtocol.ERR_PERMISSIONS, 
+        type: ErrorProtocol.ERR_PERMISSIONS,
         error: "Not enough players to start the game"
-      })
+      });
     }
 
-    const {newGame, updatedRoom} = handleStartNewGame(socket, io, room.id);
+    const { newGame, updatedRoom } = handleStartNewGame(socket, io, room.id);
     io.to(room.id).emit(Protocol.ROOM_DATA, updatedRoom);
   });
 
@@ -72,18 +83,18 @@ io.on("connection", socket => {
     const room = getRoom(user.room_id);
     const game = getGame(room.game_id);
     if (game) {
-      game.updatePlayerInput(user.id, input)
+      game.updatePlayerInput(user.id, input);
     }
-  })
+  });
 
   socket.on(Protocol.SEND_WORD, () => {
     const user = getUser(socket.id);
     const room = getRoom(user.room_id);
     const game = getGame(room.game_id);
     if (game) {
-      game.handlePlayerSendWord(user.id)
+      game.handlePlayerSendWord(user.id);
     }
-  })
+  });
 
   //Room - Spawn Delay Setting
   socket.on(Protocol.SET_SPAWN_DELAY, value =>
@@ -106,6 +117,14 @@ io.on("connection", socket => {
     handleSetAllowSpectators(socket, io, value)
   );
 
+  socket.on(Protocol.SWITCH_TO_PLAYER, id =>
+    handleSwitchToPlayer(socket, io, id)
+  );
+
+  socket.on(Protocol.SWITCH_TO_SPECTATOR, id =>
+    handleSwitchToSpectator(socket, io, id)
+  );
+
   socket.on(Protocol.SET_USERNAME, username => {
     console.log("Setting socket id", socket.id, "username to", username);
     setUsername(socket.id, username);
@@ -113,9 +132,7 @@ io.on("connection", socket => {
   //Room - Create
   socket.on(Protocol.CREATE_ROOM, () => handleCreateRoom(socket));
   //Room - Join
-  socket.on(Protocol.JOIN_ROOM, (username, room_id) =>
-    handleJoinRoom(socket, io, username, room_id)
-  );
+  socket.on(Protocol.JOIN_ROOM, room_id => handleJoinRoom(socket, io, room_id));
 
   socket.on("disconnect", () => {
     console.log("a user has disconnected", socket.id);
@@ -133,8 +150,8 @@ io.on("connection", socket => {
       room.remPlayer(socket.id);
       if (room.playerList.length === 0) {
         //Delete game object in game if any existed
-        console.log('Room is empty! Deleting Game and Room')
-        deleteGame(room.gameID)
+        console.log("Room is empty! Deleting Game and Room");
+        deleteGame(room.gameID);
         deleteRoom(room.id);
       } else {
         io.to(room.id).emit(Protocol.ROOM_DATA, room);
@@ -143,6 +160,8 @@ io.on("connection", socket => {
     removeUser(socket.id);
   });
 });
+
+
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {

@@ -54,9 +54,12 @@ class GamePlayer extends Component {
           <h1 className="gamePlayer-header__name">
             {this.props.playerStates[this.props.id].username + " (YOU)"}
           </h1>
-          <h2 className="gamePlayer-header__status">
+          <h1 className="gamePlayer-header__word_count">
+            {this.props.playerStates[this.props.id].words.length}/30
+          </h1>
+          <h1 className="gamePlayer-header__status">
             {this.props.playerStates[this.props.id].status}
-          </h2>
+          </h1>
         </div>
       );
     } else {

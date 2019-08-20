@@ -40,9 +40,15 @@ class Room {
   }
 
   remPlayer(playerID) {
-    this.playerList = this.playerList.filter(player => {
-      return player.id !== playerID;
+    const player_index = this.playerList.findIndex(player => {
+      return player.id === playerID;
     });
+  
+    if (player_index !== -1) {
+      return this.playerList.splice(player_index, 1)[0];
+    } else {
+      return;
+    }
   }
 
   addSpectator(playerObject) {
@@ -50,9 +56,15 @@ class Room {
   }
 
   remSpectator(playerID) {
-    this.spectatorList = this.spectatorList.filter(player => {
-      return player.id !== playerID;
+    const player_index = this.spectatorList.findIndex(player => {
+      return player.id === playerID;
     });
+  
+    if (player_index !== -1) {
+      return this.spectatorList.splice(player_index, 1)[0];
+    } else {
+      return;
+    }
   }
 
   setHost(playerID) {
