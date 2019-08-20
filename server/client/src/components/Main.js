@@ -38,7 +38,7 @@ class Main extends Component {
     }
     this.setState({ connecting: false });
     if (!this.props.connection.connected) {
-      this.props.connectSocket();
+      this.props.connectSocket(process.env.IO_URL);
     }
     this.props.setUsername(this.state.name);
     this.props.createRoom(this.state.name);
@@ -58,11 +58,11 @@ class Main extends Component {
     if (name_error) return;
     
     if (!this.props.connection.connected) {
-      this.props.connectSocket();
+      this.props.connectSocket(process.env.IO_URL);
     }
     this.props.setUsername(this.state.name);
     
-    this.props.joinRoom(this.state.name, this.state.room_id);
+    this.props.joinRoom(this.state.room_id);
   }
 
   handleShowJoin() {

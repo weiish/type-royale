@@ -5,9 +5,11 @@ export const CONNECTION_CONFIRMED    = 'socket/connection_confirmed'
 export const SET_USERNAME   = 'socket/set-username'
 
 
-export const connectSocket = () => {
+export const connectSocket = (url) => {
+    console.log('Attempting to connect to',url)
     return {
-        type: CONNECT_SOCKET
+        type: CONNECT_SOCKET,
+        url
     }
 }
 

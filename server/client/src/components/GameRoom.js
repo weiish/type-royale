@@ -32,7 +32,7 @@ class GameRoom extends Component {
   }
 
   copyInviteLink = () => {
-    navigator.clipboard.writeText(`${window.location.hostname}/join?id=${this.props.room.room.id}`)
+    navigator.clipboard.writeText(`${window.location.hostname}/?room=${this.props.room.room.id}`)
   }
 
   renderGameHeader() {
