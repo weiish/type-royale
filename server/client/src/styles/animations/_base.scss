@@ -1,0 +1,14 @@
+/* ANIMATIONS -------------------------------*/
+/* Grow */
+.hvr-grow {
+    display: inline-block;
+    vertical-align: middle;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -moz-osx-font-smoothing: grayscale;
+    transition: transform 0.3s;
+}
+
+.hvr-grow:hover {
+    transform: scale(1.1);
+}

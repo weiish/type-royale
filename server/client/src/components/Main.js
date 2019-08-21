@@ -116,14 +116,14 @@ class Main extends Component {
       return (
         <div className="main-button-wrapper">
           <button
-            className="main-button"
+            className="main-button hvr-grow"
             disabled={this.checkConnecting()}
             onClick={this.handleShowCreateGame}
           >
             {!this.checkConnecting() ? "Create Game" : "Connecting..."}
           </button>
           <button
-            className="main-button"
+            className="main-button hvr-grow"
             disabled={this.checkConnecting()}
             onClick={this.handleShowJoin}
           >
@@ -137,7 +137,7 @@ class Main extends Component {
   renderNameField() {
     return (
       <input
-            className="main-input__input"
+            className="main-input__input hvr-grow"
             onChange={this.handleNameInput}
             type="text"
             value={this.state.name}
@@ -150,7 +150,7 @@ class Main extends Component {
   renderRoomField() {
     return (
       <input
-            className="main-input__input"
+            className="main-input__input hvr-grow"
             onChange={this.handleRoomInput}
             type="text"
             value={this.state.room_id}
@@ -171,14 +171,14 @@ class Main extends Component {
     return (
       <div className="main-button-wrapper">
         <button
-          className="main-button"
+          className="main-button hvr-grow"
           disabled={this.checkConnecting()}
           onClick={this.handleGoBack}
         >
           Back
         </button>
         <button
-          className="main-button"
+          className="main-button hvr-grow"
           disabled={this.checkConnecting()}
           onClick={onClickGo}
         >

@@ -74,6 +74,10 @@
     background: lighten($blue, 10%);
 }
 
+.main-button:active:hover {
+    background: darken($blue, 20%);
+}
+
 .main-button:disabled {
     background: gray;
     border-bottom: .6rem solid darken(gray, 10%);
