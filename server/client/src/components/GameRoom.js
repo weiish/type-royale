@@ -18,8 +18,14 @@ class GameRoom extends Component {
           content.push(<GameOtherPlayer key={player_id} id={player_id} />);
         }
       }
+    } else if (this.props.room.lastGame) {
+      for (let player_id in this.props.room.lastGame.playerStates) {
+        if (player_id !== this.props.id) {
+          content.push(<GameOtherPlayer key={player_id} id={player_id} />);
+        }
+      }
     } else {
-      const playerList = this.props.room.room.playerList;
+      const playerList = this.props.room.playerList;
       for (let i = 0; i < playerList.length; i++) {
         if (playerList[i].id !== this.props.id) {
           content.push(
@@ -32,38 +38,74 @@ class GameRoom extends Component {
   }
 
   copyInviteLink = () => {
-    navigator.clipboard.writeText(`${window.location.hostname}/?room=${this.props.room.room.id}`)
-  }
+    navigator.clipboard.writeText(
+      `${window.location.hostname}/?room=${this.props.room.id}`
+    );
+  };
 
   renderGameHeader() {
+    const renderStart = () => {
+      if (this.props.id === this.props.room.hostID) {
+        return (
+          <button
+            className="button game-room__button"
+            onClick={this.props.startGame}
+            disabled={this.props.room.gameStarted}
+          >
+            Start Game
+          </button>
+        );
+      } else {
+        return;
+      }
+    };
+
     return (
       <div className="game-room__header">
-          <div className="game-room__room-info">
-            <h1 className="game-room__title">Room:</h1>
-            <h1 className="game-room__id">{this.props.room.room.id}</h1>
-            <button className="button game-room__button" onClick={this.copyInviteLink}>
-              Copy Link
-            </button>
-            <button className="button game-room__button" onClick={this.props.startGame}>
-              Start Game
-            </button>
-          </div>
-          <div className="game-room__game-info">
+        <div className="game-room__room-info">
+          <h1 className="game-room__title">Room:</h1>
+          <h1 className="game-room__id">{this.props.room.id}</h1>
+          <button
+            className="button game-room__button"
+            onClick={this.copyInviteLink}
+          >
+            Invite Link
+          </button>
+          {renderStart()}
+        </div>
+        <div className="game-room__game-info">
+          <div className="game-status__container">
+            <h1 className="game-status__label">Status</h1>
             <h1 className="game-status__status">
-              Status:{" "}
-              {this.props.room.room.gameStarted
+              {this.props.room.gameStarted
                 ? "In Progress"
                 : "Waiting for players"}
             </h1>
+          </div>
+
+          <div className="game-status__container">
+            <h1 className="game-status__label">Time</h1>
             <h1 className="game-status__elapsed-time">
-              Time: {this.props.game.elapsedTime / 1000}
+              {this.props.game.elapsedTime / 1000}
             </h1>
+          </div>
+
+          <div className="game-status__container">
+            <h1 className="game-status__label">Spawn</h1>
             <h1 className="game-status__spawn-time">
-              Spawn: {this.props.game.timeUntilSpawn / 1000}
+              {this.props.game.timeUntilSpawn / 1000}
+            </h1>
+          </div>
+
+          <div className="game-status__container">
+            <h1 className="game-status__label">Last Winner</h1>
+            <h1 className="game-status__last-winner">
+              {this.props.room.lastWinner}
             </h1>
           </div>
         </div>
-    )
+      </div>
+    );
   }
 
   render() {
@@ -90,7 +132,7 @@ class GameRoom extends Component {
 
 const mapStateToProps = state => {
   return {
-    room: state.room,
+    room: state.room.room,
     game: state.game,
     id: state.connection.user_id
   };

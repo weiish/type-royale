@@ -15,9 +15,14 @@ const userIsHost = (user, room) => {
   return user.id === room.hostID;
 };
 
-const handleCreateRoom = socket => {
+const handleCreateRoom = (socket, io) => {
+
+  const sendRoomData = (room_id, room) => {
+    io.to(room_id).emit(Protocol.ROOM_DATA, room);
+  }
+
   console.log("Server got Create Room Request from socket id:", socket.id);
-  let newRoom = createRoom(socket.id);
+  let newRoom = createRoom(socket.id, sendRoomData);
   setUserRoom(socket.id, newRoom.id);
   const user = getUser(socket.id);
   newRoom.addPlayer(user);
@@ -25,7 +30,7 @@ const handleCreateRoom = socket => {
   socket.emit(Protocol.ROOM_DATA, newRoom);
 };
 
-const handleJoinRoom = (socket, io, room_id) => {
+const handleJoinRoom = (socket, room_id) => {
   let existingRoom = getRoom(room_id);
   if (!existingRoom) {
     console.log("Invalid room ID, sending error back");
@@ -36,14 +41,17 @@ const handleJoinRoom = (socket, io, room_id) => {
   } else {
     setUserRoom(socket.id, room_id);
     const user = getUser(socket.id);
-    if (existingRoom.isFull()) {
+    if (existingRoom.isFull() || existingRoom.gameStarted) {
       existingRoom.addSpectator(user);
     } else {
       existingRoom.addPlayer(user);
     }
     
     socket.join(existingRoom.id);
-    io.to(room_id).emit(Protocol.ROOM_DATA, existingRoom);
+    existingRoom.sendUpdate();
+    if (existingRoom.gameStarted) {
+      
+    }
     socket.broadcast
       .to(room_id)
       .emit(
@@ -53,7 +61,7 @@ const handleJoinRoom = (socket, io, room_id) => {
   }
 };
 
-const handleSetSpawnDelay = (socket, io, value) => {
+const handleSetSpawnDelay = (socket, value) => {
   if (value >= 1 && value <= 10) {
     const user = getUser(socket.id);
     const room = getRoom(user.room_id);
@@ -65,7 +73,7 @@ const handleSetSpawnDelay = (socket, io, value) => {
         });
       }
       room.setSpawnDelay(value);
-      io.to(room.id).emit(Protocol.ROOM_DATA, room);
+      room.sendUpdate();
     } else {
       socket.emit(Protocol.ENCOUNTERED_ERROR, {
         type: ErrorProtocol.ERR_PERMISSIONS,
@@ -80,7 +88,7 @@ const handleSetSpawnDelay = (socket, io, value) => {
   }
 };
 
-const handleSetMaxWordLength = (socket, io, value) => {
+const handleSetMaxWordLength = (socket, value) => {
   const user = getUser(socket.id);
   const room = getRoom(user.room_id);
 
@@ -93,7 +101,7 @@ const handleSetMaxWordLength = (socket, io, value) => {
         });
       }
       room.setMaxWordLength(value);
-      io.to(room.id).emit(Protocol.ROOM_DATA, room);
+      room.sendUpdate();
     } else {
       socket.emit(Protocol.ENCOUNTERED_ERROR, {
         type: ErrorProtocol.ERR_PERMISSIONS,
@@ -108,7 +116,7 @@ const handleSetMaxWordLength = (socket, io, value) => {
   }
 };
 
-const handleSetMinWordLength = (socket, io, value) => {
+const handleSetMinWordLength = (socket, value) => {
   const user = getUser(socket.id);
   const room = getRoom(user.room_id);
 
@@ -121,7 +129,7 @@ const handleSetMinWordLength = (socket, io, value) => {
         });
       }
       room.setMinWordLength(value);
-      io.to(room.id).emit(Protocol.ROOM_DATA, room);
+      room.sendUpdate();
     } else {
       socket.emit(Protocol.ENCOUNTERED_ERROR, {
         type: ErrorProtocol.ERR_PERMISSIONS,
@@ -136,7 +144,7 @@ const handleSetMinWordLength = (socket, io, value) => {
   }
 };
 
-const handleSetPowerUps = (socket, io, value) => {
+const handleSetPowerUps = (socket, value) => {
   if (value === true || value === false) {
     const user = getUser(socket.id);
     const room = getRoom(user.room_id);
@@ -148,7 +156,7 @@ const handleSetPowerUps = (socket, io, value) => {
         });
       }
       room.setPowerUps(value);
-      io.to(room.id).emit(Protocol.ROOM_DATA, room);
+      room.sendUpdate();
     } else {
       socket.emit(Protocol.ENCOUNTERED_ERROR, {
         type: ErrorProtocol.ERR_PERMISSIONS,
@@ -163,7 +171,7 @@ const handleSetPowerUps = (socket, io, value) => {
   }
 };
 
-const handleSetAllowSpectators = (socket, io, value) => {
+const handleSetAllowSpectators = (socket, value) => {
   if (value === true || value === false) {
     const user = getUser(socket.id);
     const room = getRoom(user.room_id);
@@ -175,7 +183,7 @@ const handleSetAllowSpectators = (socket, io, value) => {
         });
       }
       room.setAllowSpectate(value);
-      io.to(room.id).emit(Protocol.ROOM_DATA, room);
+      room.sendUpdate();
     } else {
       socket.emit(Protocol.ENCOUNTERED_ERROR, {
         type: ErrorProtocol.ERR_PERMISSIONS,
@@ -190,28 +198,40 @@ const handleSetAllowSpectators = (socket, io, value) => {
   }
 };
 
-const handleSwitchToPlayer = (socket, io, id) => {
+const handleSwitchToPlayer = (socket, id) => {
   const moveUser = getUser(id);
   const requestUser = getUser(socket.id);
   const room = getRoom(moveUser.room_id);
+  if (room.gameStarted) return socket.emit(Protocol.ENCOUNTERED_ERROR, {
+    type: ErrorProtocol.ERR_PERMISSIONS,
+    error: "Cannot switch to Player while game is in progress"
+  });
+  if (room.playerList.length >= room.MAX_PLAYERS) return socket.emit(Protocol.ENCOUNTERED_ERROR, {
+    type: ErrorProtocol.ERR_PERMISSIONS,
+    error: "Players list is full"
+  }); 
   if (userIsHost(requestUser, room) || socket.id === id) { //If requester is host, or the user requested to change themselves
     const removedSpectator = room.remSpectator(id);
     if (removedSpectator) {
       room.addPlayer(removedSpectator)
-      io.to(room.id).emit(Protocol.ROOM_DATA, room);
+      room.sendUpdate();
     }
   }
 }
 
-const handleSwitchToSpectator = (socket, io, id) => {
+const handleSwitchToSpectator = (socket, id) => {
   const moveUser = getUser(id);
   const requestUser = getUser(socket.id);
   const room = getRoom(moveUser.room_id);
+  if (room.gameStarted) return socket.emit(Protocol.ENCOUNTERED_ERROR, {
+    type: ErrorProtocol.ERR_PERMISSIONS,
+    error: "Cannot switch to Spectator while game is in progress"
+  });
   if (userIsHost(requestUser, room) || socket.id === id) { //If requester is host, or the user requested to change themselves
     const removedPlayer = room.remPlayer(id);
     if (removedPlayer) {
       room.addSpectator(removedPlayer)
-      io.to(room.id).emit(Protocol.ROOM_DATA, room);
+      room.sendUpdate();
     }
   }
 }

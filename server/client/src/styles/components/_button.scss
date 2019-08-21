@@ -12,3 +12,8 @@
 .button:hover{
     background: lighten($blue, 10%);
 }
+
+.button:disabled {
+    background: gray;
+    border-bottom: .3rem solid darken(gray, 10%);
+}

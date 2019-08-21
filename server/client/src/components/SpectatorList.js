@@ -8,7 +8,7 @@ class SpectatorList extends React.Component {
     const spectatorList = this.props.spectatorList.map(player => {
       return (
         <li className="player-list__li" key={player.id}>
-          {player.username}
+        {(player.id === this.props.hostID) ? "⭐" : ""}{(player.id === this.props.lastWinnerID) ? "🥇" : ""}{player.username}
         </li>
       );
     });
@@ -20,7 +20,7 @@ class SpectatorList extends React.Component {
       return player.id === this.props.id;
     });
     if (!me) {
-      return <button className="button player-list__button" onClick={() => this.props.switchToSpectator(this.props.id)}>Swap</button>;
+      return <button className="button player-list__button" onClick={() => this.props.switchToSpectator(this.props.id)} disabled={this.props.gameStarted}>Swap</button>;
     }
     return;
   }
@@ -42,7 +42,10 @@ class SpectatorList extends React.Component {
 const mapStateToProps = state => {
   return {
     spectatorList: state.room.room.spectatorList,
-    id: state.connection.user_id
+    gameStarted: state.room.room.gameStarted,
+    lastWinnerID: state.room.room.lastWinnerID,
+    id: state.connection.user_id,
+    hostID: state.room.room.hostID
   };
 };
 

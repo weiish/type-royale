@@ -1,44 +1,14 @@
 const shortid = require("shortid");
 const MAX_WORD_LIST_LENGTH = 30;
 const INITIAL_WORD_LIST_LENGTH = 10;
-const PLAYER_STATUS_ALIVE = "alive";
-const PLAYER_STATUS_DEAD = "dead";
+const PLAYER_STATUS_ALIVE = "Alive";
+const PLAYER_STATUS_DEAD = "Dead";
+const PLAYER_STATUS_DISCONNECTED = "Disconnected";
 const { generateRandomWord } = require("./words");
 var games = [];
 
-/*
-    Each player needs...
-        Socket ID    - for easily finding which player object to update
-        User name    - for displayed name in player block
-        Words        - for holding words in their list
-        Input        - for holding the current input of that user
-    */
-
-/*
-    Game Object OUTGOING Traffix
-        Send Time updates to all users per tick
-            to update clocks
-        Send Player State updates to all users (userName, wordList, isAlive)
-            when a user sends a word
-            when new words are generated to all users
-            when a user dies
-        Send Player inputs to all users 
-            when a user inputs something (LAG?!)
-            every time tick
-            OPTIONAL: this might cause a lot of unnecessary traffic, need to test it
-        Send Game state to all users 
-            when game starts
-            when game is done
-
-    Game Object INCOMING Traffic
-        Player updates their input
-            Whenever a user types something (might need to NOT do this if too much traffic/lag)
-        Player SENDS a word
-            Whenever a user hits spacebar/enter to "send" their current input
-    */
-
 class Game {
-  constructor(room, sendTimeUpdates, sendGameState, sendPlayerInputs) {
+  constructor(room, sendTimeUpdates, sendGameState, sendPlayerInputs, sendMessage) {
     this.id = shortid.generate();
     this.room_id = room.id;
     this.playerStates = {};
@@ -49,7 +19,8 @@ class Game {
         words: [],
         status: PLAYER_STATUS_ALIVE,
         input: "",
-        order: null
+        order: null,
+        lastAttacker: ""
       };
     });
     this.settings = room.settings;
@@ -57,12 +28,16 @@ class Game {
     this.startTime = null;
     this.elapsedTime = null;
     this.timeUntilSpawn = null;
+    this.winner = null;
     this.timeInterval = 1000;
     this.timer = undefined;
     this.sendTimeUpdates = sendTimeUpdates;
     this.sendGameState = sendGameState;
     this.sendPlayerInputs = sendPlayerInputs;
+    this.onGameEnd = room.endGame;
     this.recurseTimer = this.recurseTimer.bind(this);
+    this.endGame = this.endGame.bind(this);
+    this.sendMessage = sendMessage;
   }
 
   handlePlayerSendWord(player_id) {
@@ -75,19 +50,23 @@ class Game {
       if (removedWord) {
         //Generate word of equal length and send to target player
         const targetList = this.playerList.filter(player => {
-          return player.id !== player_id;
+          return ((player.id !== player_id) && (this.playerStates[player.id].status === PLAYER_STATUS_ALIVE));
         });
         const targetPlayerIndex = Math.floor(Math.random() * targetList.length);
         const randomWord = generateRandomWord(removedWord[0].length);
-        this.addWordToPlayer(targetList[targetPlayerIndex].id, randomWord);
+
+        this.addWordToPlayer(targetList[targetPlayerIndex].id, randomWord, this.playerStates[player_id].username);
       }
       this.sendGameState(this.generateGameStatePacket());
     }
   }
 
-  addWordToPlayer(player_id, word) {
+  addWordToPlayer(player_id, word, lastAttacker) {
     const isAlive = this.checkPlayerStatus(player_id);
-    if (isAlive) this.playerStates[player_id].words.push(word);
+    if (isAlive) {
+      this.playerStates[player_id].words.push(word)
+      this.playerStates[player_id].lastAttacker = lastAttacker;
+    };
   }
 
   tryRemWordFromPlayer(player_id, word) {
@@ -111,13 +90,45 @@ class Game {
     if (this.playerStates[player_id].words.length >= MAX_WORD_LIST_LENGTH) {
       //Player Lost
       this.playerStates[player_id].status = PLAYER_STATUS_DEAD;
+      this.sendMessage(`${this.playerStates[player_id].username} was killed by ${this.playerStates[player_id].lastAttacker}`);
+      this.checkWinner();
       return false;
     }
     return true;
   }
 
+  checkWinner() {
+    let deadCount = 0;
+    let alivePlayerId;
+    for (var id in this.playerStates) {
+      if (this.playerStates[id].status === PLAYER_STATUS_DEAD || this.playerStates[id].status === PLAYER_STATUS_DISCONNECTED) {
+        deadCount++;
+      } else {
+        alivePlayerId = id;
+      }
+    }
+    if (deadCount === Object.keys(this.playerStates).length - 1) {
+      //End game, we have a winner
+      this.endGame();
+      this.winner = alivePlayerId;
+      this.playerStates[alivePlayerId].status = "Winner"
+      this.sendMessage(`${this.playerStates[alivePlayerId].username} has won!`)
+      this.onGameEnd(this.playerStates[alivePlayerId].username, alivePlayerId, this);
+      //TODO Play game over animation
+    }
+    this.sendGameState(this.generateGameStatePacket());
+  }
+
+  disconnectPlayer(player_id) {
+    if (player_id in this.playerStates) {
+      this.playerStates[player_id].status = PLAYER_STATUS_DISCONNECTED;
+      this.checkWinner();
+    }
+  }
+
   startGame() {
     console.log("Game ", this.id, "started!");
+    this.sendMessage('A new game is starting!')
     this.generateInitialLists();
     this.gameStarted = true;
     this.startTimer();
@@ -214,14 +225,10 @@ class Game {
     for (var player_id in this.playerStates) {
       if (this.playerStates[player_id].status === PLAYER_STATUS_ALIVE) {
         let word = generateRandomWord(randomWordLength);
-        this.addWordToPlayer(player_id, word);
+        this.addWordToPlayer(player_id, word, "the word spawner");
       }
     }
     this.sendGameState(this.generateGameStatePacket());
-  }
-
-  getState() {
-    return {};
   }
 }
 
@@ -229,12 +236,13 @@ const randomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const createGame = (room, sendTimeUpdates, sendGameState, sendPlayerInputs) => {
+const createGame = (room, sendTimeUpdates, sendGameState, sendPlayerInputs, sendMessage) => {
   let newGame = new Game(
     room,
     sendTimeUpdates,
     sendGameState,
-    sendPlayerInputs
+    sendPlayerInputs,
+    sendMessage
   );
   games.push(newGame);
   return newGame;

@@ -9,8 +9,26 @@
     margin-top: 1rem;
     margin-bottom: 1rem;
     margin-right: 1rem;
-    box-shadow: 3px 4px 5px #5c4343;
+    box-shadow: 0 0 3px #b15b5b;
     height: 47%;
+}
+
+.gameOtherPlayer-winner {
+    box-shadow: 0 0 10px #2da3d1;
+}
+
+.gameOtherPlayer-alive {
+    color: green;
+}
+
+.gameOtherPlayer-dead * {
+    color: red;
+    background: $off-black !important;
+}
+
+.gameOtherPlayer-disconnected {
+    color: yellow;
+    background: $off-black !important;
 }
 
 .gameOtherPlayer__word-list {
@@ -48,7 +66,7 @@
 }
 
 .gameOtherPlayer-header {
-    background: $back-blue;
+    background: $off-black;
     color: $red;
     display: flex;
     justify-content: space-between; //Distribute remaining space between

@@ -1,13 +1,13 @@
 const express = require("express");
 const app = express();
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'))
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
 
-  const path = require('path')
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-  })
+  const path = require("path");
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
 }
 
 const server = require("http").Server(app);
@@ -65,6 +65,11 @@ io.on("connection", socket => {
       });
     }
 
+    if (room.gameStarted)
+      return socket.emit(Protocol.ENCOUNTERED_ERROR, {
+        type: ErrorProtocol.ERR_PERMISSIONS,
+        error: "A game is currently in session"
+      });
     const { newGame, updatedRoom } = handleStartNewGame(socket, io, room.id);
     io.to(room.id).emit(Protocol.ROOM_DATA, updatedRoom);
   });
@@ -98,31 +103,27 @@ io.on("connection", socket => {
 
   //Room - Spawn Delay Setting
   socket.on(Protocol.SET_SPAWN_DELAY, value =>
-    handleSetSpawnDelay(socket, io, value)
+    handleSetSpawnDelay(socket, value)
   );
   //Room - Max Word Length Setting
   socket.on(Protocol.SET_MAX_WORD_LENGTH, value =>
-    handleSetMaxWordLength(socket, io, value)
+    handleSetMaxWordLength(socket, value)
   );
   //Room - Min Word Length Setting
   socket.on(Protocol.SET_MIN_WORD_LENGTH, value =>
-    handleSetMinWordLength(socket, io, value)
+    handleSetMinWordLength(socket, value)
   );
   //Room - Power ups Setting
-  socket.on(Protocol.SET_POWER_UPS, value =>
-    handleSetPowerUps(socket, io, value)
-  );
+  socket.on(Protocol.SET_POWER_UPS, value => handleSetPowerUps(socket, value));
   //Room - Spectators Setting
   socket.on(Protocol.SET_ALLOW_SPECTATORS, value =>
-    handleSetAllowSpectators(socket, io, value)
+    handleSetAllowSpectators(socket, value)
   );
 
-  socket.on(Protocol.SWITCH_TO_PLAYER, id =>
-    handleSwitchToPlayer(socket, io, id)
-  );
+  socket.on(Protocol.SWITCH_TO_PLAYER, id => handleSwitchToPlayer(socket, id));
 
   socket.on(Protocol.SWITCH_TO_SPECTATOR, id =>
-    handleSwitchToSpectator(socket, io, id)
+    handleSwitchToSpectator(socket, id)
   );
 
   socket.on(Protocol.SET_USERNAME, username => {
@@ -130,9 +131,9 @@ io.on("connection", socket => {
     setUsername(socket.id, username);
   });
   //Room - Create
-  socket.on(Protocol.CREATE_ROOM, () => handleCreateRoom(socket));
+  socket.on(Protocol.CREATE_ROOM, () => handleCreateRoom(socket, io));
   //Room - Join
-  socket.on(Protocol.JOIN_ROOM, room_id => handleJoinRoom(socket, io, room_id));
+  socket.on(Protocol.JOIN_ROOM, room_id => handleJoinRoom(socket, room_id));
 
   socket.on("disconnect", () => {
     console.log("a user has disconnected", socket.id);
@@ -148,20 +149,34 @@ io.on("connection", socket => {
         );
       socket.leave(room.id);
       room.remPlayer(socket.id);
+
       if (room.playerList.length === 0) {
         //Delete game object in game if any existed
         console.log("Room is empty! Deleting Game and Room");
         deleteGame(room.gameID);
         deleteRoom(room.id);
       } else {
+        if (room.gameStarted) {
+          const game = getGame(room.game_id);
+          game.disconnectPlayer(user.id);
+        }
+
+        if (socket.id === room.hostID) {
+          room.selectRandomNewHost();
+          io.to(room.id).emit(
+            Protocol.MESSAGE,
+            generateMessage(
+              "SYSTEM",
+              "The host has left, selecting a random new host"
+            )
+          );
+        }
         io.to(room.id).emit(Protocol.ROOM_DATA, room);
       }
     }
     removeUser(socket.id);
   });
 });
-
-
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {

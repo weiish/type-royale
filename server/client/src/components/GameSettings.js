@@ -44,7 +44,7 @@ class GameSettings extends Component {
         {this.props.maxWordLength}
         <InputRange
           className="game-settings__word-length-input"
-          maxValue={31}
+          maxValue={25}
           minValue={1}
           value={{
             min: this.props.minWordLength,

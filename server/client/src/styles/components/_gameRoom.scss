@@ -14,6 +14,8 @@
     text-align: center;
     align-items: center;
     background: $light-blue;
+    max-height: 7rem;
+    min-height: 7rem;
     margin: 0;
 }
 
@@ -63,34 +65,41 @@
     margin: 0;
 }
 
-
-.game-status__status {
+.game-status__container {
     margin-left: 2rem;
     flex: 1 1 auto;
-    color: gold;
+    color: $off-white;
     font-size: $m-size;
     min-width: 20rem;
     max-width: 20rem;
 }
 
+.game-status__label {
+    color: $off-white;
+    font-size: $m-size;
+}
+
+.game-status__status {
+    color: gold;
+    font-size: $m-size;
+}
+
 .game-status__elapsed-time {
-    margin-left: 2rem;
-    flex: 1 1 auto;
     color:gold;
     font-size: $m-size;
-    min-width: 15rem;
-    max-width: 15rem;
 }
+
 
 .game-status__spawn-time {
-    margin-left: 2rem;
-    flex: 1 1 auto;
     color:gold;
     font-size: $m-size;
-    min-width: 15rem;
-    max-width: 15rem;
 }
 
+
+.game-status__last-winner {
+    color:gold;
+    font-size: $m-size;
+}
 
 .game-other-player-wrapper {
     display: flex;

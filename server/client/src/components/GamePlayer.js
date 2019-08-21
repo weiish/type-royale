@@ -14,13 +14,21 @@ class GamePlayer extends Component {
   }
 
   renderWordList() {
+    let playerStates;
     if (this.props.gameStarted) {
-      return this.props.playerStates[this.props.id].words.map((word, index) => {
-        return this.getHighlightedText(index, word, this.state.input);
-      });
+      playerStates = this.props.playerStates;
+    } else if (this.props.lastGame) {
+      if (this.id in this.props.lastGame.playerStates) {
+        playerStates = this.props.lastGame.playerStates;
+      } else {
+        return <p className="gamePlayer__word">Words list</p>;
+      }
     } else {
       return <p className="gamePlayer__word">Words list</p>;
     }
+    return playerStates[this.props.id].words.map((word, index) => {
+      return this.getHighlightedText(index, word, this.state.input);
+    });
   }
 
   getHighlightedText(index, text, highlight) {
@@ -48,29 +56,47 @@ class GamePlayer extends Component {
   }
 
   renderPlayerHeader() {
+    let playerStates;
     if (this.props.gameStarted) {
-      return (
-        <div className="gamePlayer-header">
-          <h1 className="gamePlayer-header__name">
-            {this.props.playerStates[this.props.id].username + " (YOU)"}
-          </h1>
-          <h1 className="gamePlayer-header__word_count">
-            {this.props.playerStates[this.props.id].words.length}/30
-          </h1>
-          <h1 className="gamePlayer-header__status">
-            {this.props.playerStates[this.props.id].status}
-          </h1>
-        </div>
-      );
+      console.log("Game Started Rendering");
+      playerStates = this.props.playerStates;
+    } else if (this.props.lastGame) {
+      console.log("Last Game Rendering");
+
+      if (this.id in this.props.lastGame.playerStates) {
+        playerStates = this.props.lastGame.playerStates;
+      } else {
+        return (
+          <div className="gamePlayer-header">
+            <h1 className="gamePlayer-header__name">
+              {this.props.username}
+            </h1>
+          </div>
+        );
+      }
     } else {
       return (
         <div className="gamePlayer-header">
           <h1 className="gamePlayer-header__name">
-            {this.props.username + " (YOU)"}
+            {this.props.username}
           </h1>
         </div>
       );
     }
+
+    return (
+      <div className="gamePlayer-header">
+        <h1 className="gamePlayer-header__name">
+          {playerStates[this.props.id].username + " (YOU)"}
+        </h1>
+        <h1 className="gamePlayer-header__word_count">
+          {playerStates[this.props.id].words.length}/30
+        </h1>
+        <h1 className="gamePlayer-header__status">
+          {playerStates[this.props.id].status}
+        </h1>
+      </div>
+    );
   }
 
   renderPlayerInput() {
@@ -113,21 +139,26 @@ class GamePlayer extends Component {
   }
 
   render() {
-    if (this.props.playerList.find(({id}) => id === this.props.id)) {
+    let winnerStyle = "";
+    if (this.props.lastGame) {
+      winnerStyle =
+        this.props.id === this.props.lastGame.winner
+          ? " gamePlayer-winner"
+          : "";
+    }
+
+    if (this.props.playerList.find(({ id }) => id === this.props.id)) {
       return (
-        <div className="gamePlayer column">
+        <div className={"gamePlayer column" + winnerStyle}>
           {this.renderPlayerHeader()}
           <div className="gamePlayer__word-list">{this.renderWordList()}</div>
-  
+
           {this.renderPlayerInput()}
         </div>
       );
     } else {
-      return (
-        <div></div>
-      )
+      return <div />;
     }
-    
   }
 }
 
@@ -137,7 +168,8 @@ const mapStateToProps = state => {
     gameStarted: state.game.gameStarted,
     playerStates: state.game.playerStates,
     id: state.connection.user_id,
-    username: state.connection.username
+    username: state.connection.username,
+    lastGame: state.room.room.lastGame
   };
 };
 

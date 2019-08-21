@@ -8,6 +8,7 @@ const {
     getUser,
     getUsersInRoom
   } = require("./users");
+  const { generateMessage } = require("./messages");
   const Protocol = require("../constants/Protocol.js");
   const ErrorProtocol = require("../constants/ErrorProtocol.js");
 
@@ -25,8 +26,14 @@ const handleStartNewGame = (socket, io, room_id) => {
         io.to(room_id).emit(Protocol.PLAYER_INPUT, playerInputs);
     }
 
+    const sendMessage = (message) => {
+        io.to(room_id).emit(Protocol.MESSAGE, generateMessage("SYSTEM", message))
+    }
+
     let room = getRoom(room_id);
-    let newGame = createGame(room, onSendTimeUpdates, onSendGameState, onSendPlayerInputs);
+    
+
+    let newGame = createGame(room, onSendTimeUpdates, onSendGameState, onSendPlayerInputs, sendMessage);
     newGame.startGame()
     room.startGame(newGame.id)
 

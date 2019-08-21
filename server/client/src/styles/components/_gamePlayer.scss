@@ -10,14 +10,20 @@
     align-items: stretch;
 }
 
+.gamePlayer-winner {
+    box-shadow: 0 0 10px #2da3d1;
+}
+
 .gamePlayer__word-list {
     flex-wrap: wrap;
+    max-height: 80%;
+    min-height: 80%;
 }
 
 .gamePlayer__word {
     color: darken($green, 10%);
     margin: 0;
-    padding: 0.2rem $s-size;
+    padding: 0.1rem $s-size;
     font-size: 1.4rem;
     border-bottom: 1px solid lighten($light-blue, 10%);
 }

@@ -3,7 +3,7 @@ const MAX_PLAYERS = 7;
 var rooms = [];
 
 class Room {
-  constructor(hostID) {
+  constructor(hostID, onSendRoomData) {
     this.id = shortid.generate(); //Room name
     this.playerList = []; //List of player objects which contain the socket id and username
     this.spectatorList = [];
@@ -17,26 +17,51 @@ class Room {
     this.gameStarted = false;
     this.game_id = null;
     this.hostID = hostID;
+    this.MAX_PLAYERS = MAX_PLAYERS;
+    this.lastWinner = 'Nobody';
+    this.lastWinnerID = '';
+    this.lastGame = null;
+    this.onSendRoomData = onSendRoomData;
+    this.endGame = this.endGame.bind(this);
   }
 
   startGame(game_id) {
     if (!this.gameStarted) {
       this.game_id = game_id;
       this.gameStarted = true;
+      this.lastGame = null;
     }
   }
 
   isFull() {
-    return (this.playerList.length >= MAX_PLAYERS)
+    return (this.playerList.length >= this.MAX_PLAYERS)
   }
 
-  onGameOver() {
+  endGame(winner, winner_id, game) {
+    this.lastGame = game;
     this.gameStarted = false;
-    //When game tells room that the game is over, the room should....
+    this.game_id = null;
+    this.lastWinner = winner;
+    this.lastWinnerID = winner_id;
+    this.sendUpdate();
+  }
+
+  generateRoomPacket() {
+    return Object.assign({}, this, {sendRoomData: undefined});
+  }
+
+  sendUpdate() {
+    this.onSendRoomData(this.id, this.generateRoomPacket());
   }
 
   addPlayer(playerObject) {
     this.playerList.push(playerObject);
+  }
+
+  selectRandomNewHost() {
+    const randomIndex = Math.floor(Math.random() * this.playerList.length);
+    this.hostID = this.playerList[randomIndex].id;
+    this.sendUpdate();
   }
 
   remPlayer(playerID) {
@@ -92,8 +117,8 @@ class Room {
   }
 }
 
-const createRoom = hostSocketID => {
-  let newRoom = new Room(hostSocketID);
+const createRoom = (hostSocketID, onSendRoomData) => {
+  let newRoom = new Room(hostSocketID, onSendRoomData);
   rooms.push(newRoom);
   return newRoom;
 };
