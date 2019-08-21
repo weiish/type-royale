@@ -109,9 +109,21 @@ class GameRoom extends Component {
   }
 
   render() {
+    const renderOverlay = () => {
+      if (!this.props.room.gameStarted) {
+        return <div className="game-overlay">
+        <h1 className="game-overlay__message">Waiting for game to start...</h1>
+      </div>
+      } else {
+        return
+      }
+    }
+
     return (
       <div className="game-room__container">
         {this.renderGameHeader()}
+
+        
         <div className="game-container">
           <div className="column">
             <div className="game-player-spectator-container">
@@ -122,8 +134,12 @@ class GameRoom extends Component {
             <GameSettings />
             <GameChat />
           </div>
+          <div className="game-playing-area-container">
+          {renderOverlay()}
           <GamePlayer />
           <div className="column-3">{this.renderPlayers()}</div>
+          </div>
+          
         </div>
       </div>
     );

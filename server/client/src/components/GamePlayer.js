@@ -18,7 +18,7 @@ class GamePlayer extends Component {
     if (this.props.gameStarted) {
       playerStates = this.props.playerStates;
     } else if (this.props.lastGame) {
-      if (this.id in this.props.lastGame.playerStates) {
+      if (this.props.id in this.props.lastGame.playerStates) {
         playerStates = this.props.lastGame.playerStates;
       } else {
         return <p className="gamePlayer__word">Words list</p>;
@@ -87,7 +87,7 @@ class GamePlayer extends Component {
     return (
       <div className="gamePlayer-header">
         <h1 className="gamePlayer-header__name">
-          {playerStates[this.props.id].username + " (YOU)"}
+          {playerStates[this.props.id].username}
         </h1>
         <h1 className="gamePlayer-header__word_count">
           {playerStates[this.props.id].words.length}/30

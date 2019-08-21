@@ -27,6 +27,22 @@
     min-height: 80%;
 }
 
+.game-overlay {
+    position: absolute;
+    display: flex;
+    top: 0;
+    left: 0;
+    margin: 0;
+    border: none;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 57, 94, 0.568);
+}
+
+.game-overlay__message {
+    margin: auto;
+}
+
 .game-room__room-info {
     justify-content: space-between;
     margin: 0;
@@ -132,7 +148,6 @@
     flex: 1 1 auto;
     max-width: 350px;
     min-width: 350px;
-    max-height: 20%;
 }
 
 .column-3 {
@@ -140,4 +155,10 @@
     flex-direction: column;
     flex-basis: 100%;
     flex:2;
+}
+
+.game-playing-area-container {
+    display: flex;
+    flex: 3 3 auto;
+    position: relative;
 }
