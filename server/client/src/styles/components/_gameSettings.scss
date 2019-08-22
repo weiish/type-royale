@@ -1,7 +1,9 @@
 .game-settings {
     flex: 1 1 auto;
-    max-height: 21%;
-    min-height: 21%;
+    max-height: 23%;
+    min-height: 23%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .game-settings__header {

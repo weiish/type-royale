@@ -62,10 +62,10 @@ class Game {
   }
 
   addWordToPlayer(player_id, word, lastAttacker) {
+    this.playerStates[player_id].lastAttacker = lastAttacker;
     const isAlive = this.checkPlayerStatus(player_id);
     if (isAlive) {
       this.playerStates[player_id].words.push(word)
-      this.playerStates[player_id].lastAttacker = lastAttacker;
     };
   }
 

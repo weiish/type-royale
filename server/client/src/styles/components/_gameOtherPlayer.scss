@@ -53,7 +53,7 @@
 
 .gameOtherPlayer-input__input{
     background: $dark-blue;
-    color: darken($red, 10%);
+    color: lighten($red, 10%);
     border: none;
     border-bottom: 0.3rem solid darken($dark-blue, 10%);
     margin: 0 $s-size;
@@ -62,7 +62,7 @@
     width: 100%;
 }
 .gameOtherPlayer-input__input::placeholder{
-    color: darken($red, 10%);
+    color: lighten($red, 10%);
 }
 
 .gameOtherPlayer-header {
