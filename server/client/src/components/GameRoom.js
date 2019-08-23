@@ -39,7 +39,7 @@ class GameRoom extends Component {
 
   copyInviteLink = () => {
     navigator.clipboard.writeText(
-      `${window.location.hostname}/?room=${this.props.room.id}`
+      `https://${window.location.hostname}/?room=${this.props.room.id}`
     );
   };
 
