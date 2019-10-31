@@ -2,7 +2,7 @@
 
 A fast paced game where you type to clear words off your list and send them into other players' lists. 
 
-Created with Node.js, React.js, state management with Redux, and Socket.io for real time communication between players.
+Created with Node.js, Express.js, React, state management with Redux, and Socket.io for real time communication between players.
 
 # To play
 Check out the live demo at https://type--royale.herokuapp.com/  (Note that you may need to wait a bit for the app to boot up)
