@@ -14,9 +14,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^4.1.1",
+    "concurrently": "^4.1.2",
     "express": "^4.17.1",
-    "shortid": "^2.2.14",
-    "socket.io": "^2.2.0"
+    "shortid": "^2.2.16",
+    "socket.io": "^2.3.0"
   }
 }
