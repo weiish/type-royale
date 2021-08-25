@@ -9,7 +9,10 @@ import GamePlayer from "./GamePlayer";
 
 import { startGame } from "../store/game/actions";
 
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+
 class GameRoom extends Component {
+
   renderPlayers() {
     let content = [];
     if (this.props.game.gameStarted) {
@@ -41,6 +44,8 @@ class GameRoom extends Component {
     navigator.clipboard.writeText(
       `https://${window.location.hostname}/?room=${this.props.room.id}`
     );
+      NotificationManager.success('Link Copied to your Clipboard Paste and share!', 'Link Copied', 3000);
+
   };
 
   renderGameHeader() {
